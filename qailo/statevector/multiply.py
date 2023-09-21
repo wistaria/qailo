@@ -15,5 +15,4 @@ def multiply(op, v, pos):
     for i in range(m):
         ss_v = replace(ss_v, pos[i], ss_op[m+i])
         ss_to = replace(ss_to, pos[i], ss_op[i])
-    print(ss_v, ss_op, ss_to)
     return np.einsum("{},{}->{}".format(ss_v, ss_op, ss_to), v, op)

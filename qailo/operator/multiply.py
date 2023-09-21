@@ -7,13 +7,11 @@ def multiply(op, opi, pos = None):
     n = len(opi.shape) // 2
     m = len(op.shape) // 2
     if pos == None:
-        assert(m == n)
+        assert m == n
         pos = range(n)
     else:
-        assert(len(pos) == m)
-        assert(m <= n)
-        for i in pos:
-            assert(i < n)
+        assert len(pos) == m and m <= n
+        for i in pos: assert(i < n)
     ss_opi = ss_to = string.ascii_lowercase[:2*n]
     ss_op = string.ascii_uppercase[:2*m]
     for i in range(m):
