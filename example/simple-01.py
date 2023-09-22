@@ -15,6 +15,6 @@ def main():
     print(v)
     print(q.sv.vector(v))
     print(q.sv.probability(v))
+
 if __name__ == '__main__':
     main()
-    

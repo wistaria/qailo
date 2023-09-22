@@ -2,7 +2,7 @@ from .identity import identity
 from .pauli import x, y, z
 from .h import h
 from .phase import s, t
-from .rotate import rx, ry, rz
+from .rotation import rx, ry, rz
 from .control import controlled, cx, cz
 
 from .is_hermitian import is_hermitian
