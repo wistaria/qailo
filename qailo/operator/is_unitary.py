@@ -3,4 +3,5 @@ from .is_identity import is_identity
 from .multiply import multiply
 
 def is_unitary(op):
-    return is_identity(multiply(hconj(op), op))
+    n = len(op.shape) // 2
+    return is_identity(multiply(hconj(op), op, range(n)))

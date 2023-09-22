@@ -4,7 +4,7 @@ import qailo as q
 def test_s():
     assert q.op.is_unitary(q.op.s())
     # S = T^2
-    assert q.is_equal(q.op.s(), q.op.multiply(q.op.t(), q.op.t()))
+    assert q.is_equal(q.op.s(), q.op.multiply(q.op.t(), q.op.t(), [0]))
 
 def test_t():
     assert q.op.is_unitary(q.op.t())
