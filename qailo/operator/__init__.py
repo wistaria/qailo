@@ -7,8 +7,10 @@ from .controlled import controlled, cx, cz
 
 from .pure_state import pure_state
 
+from .is_density_matrix import is_density_matrix
 from .is_hermitian import is_hermitian
 from .is_identity import is_identity
+from .is_semi_positive import is_semi_positive
 from .is_unitary import is_unitary
 
 from .hconj import hconj
@@ -31,8 +33,10 @@ __all__ = [
     cx,
     cz,
     pure_state,
+    is_density_matrix,
     is_hermitian,
     is_identity,
+    is_semi_positive,
     is_unitary,
     hconj,
     matrix,
