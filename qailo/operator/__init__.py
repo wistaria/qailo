@@ -15,3 +15,27 @@ from .hconj import hconj
 from .matrix import matrix
 from .multiply import multiply
 from .trace import trace
+
+__all__ = [
+    identity,
+    x,
+    y,
+    z,
+    h,
+    s,
+    t,
+    rx,
+    ry,
+    rz,
+    controlled,
+    cx,
+    cz,
+    pure_state,
+    is_hermitian,
+    is_identity,
+    is_unitary,
+    hconj,
+    matrix,
+    multiply,
+    trace,
+]

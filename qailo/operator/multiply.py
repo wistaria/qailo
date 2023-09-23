@@ -7,7 +7,7 @@ from ..util.replace import replace
 def multiply(op, opi, pos=None):
     n = len(opi.shape) // 2
     m = len(op.shape) // 2
-    if pos == None:
+    if pos is None:
         assert m == n
         pos = range(n)
     assert len(pos) == m and m <= n

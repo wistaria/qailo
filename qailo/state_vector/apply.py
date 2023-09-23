@@ -7,7 +7,7 @@ from ..util.replace import replace
 def apply(op, v, pos=None):
     n = len(v.shape)
     m = len(op.shape) // 2
-    if pos == None:
+    if pos is None:
         assert m == n
         pos = range(n)
     assert len(pos) == m

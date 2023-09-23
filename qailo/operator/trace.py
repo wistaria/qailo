@@ -5,7 +5,7 @@ from ..util.letters import letters
 
 def trace(op, pos=None):
     n = len(op.shape) // 2
-    if pos == None:
+    if pos is None:
         pos = range(n)
     assert len(pos) <= n
     for i in pos:
