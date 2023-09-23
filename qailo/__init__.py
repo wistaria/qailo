@@ -1,3 +1,5 @@
+from ._version import version
+
 from . import operator, state_vector, util
 from . import state_vector as sv
 from . import operator as op

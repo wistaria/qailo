@@ -1,27 +1,29 @@
 [build-system]
-requires = ["scikit-build-core"]
-build-backend = "scikit_build_core.build"
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "qailo"
-version = "0.1.0"
-description = "Quantum Circuit Examples"
+description = "Simplest Quantum Circuit Simulator"
+readme = "README.md"
 authors = [
     { name = "Synge Todo", email = "wistaria@phys.s.u-tokyo.ac.jp" },
 ]
+license = { file = "LICENSE" }
 classifiers = [
-    "License :: Apache-2.0",
+    "Programming Language :: Python :: 3",
 ]
+dynamic = [ "version" ]
+dependencies = [ "numpy" ]
 
-[project.urls]
-Homepage = "https://github.com/wistaria/qailo"
+[tool.setuptools.dynamic]
+version = { attr = "qailo._version.version" }
 
-[tool.scikit-build]
-# Protect the configuration against future changes in scikit-build-core
-minimum-version = "0.4"
+[tool.setuptools.packages.find]
+exclude = [ "build", "tests" ]
 
-# Setuptools-style build caching in a local directory
-build-dir = "build/{wheel_tag}"
+[tool.setuptools_scm]
+write_to = "qailo/_version.py"
 
-# Build stable ABI wheels for CPython 3.12+
-wheel.py-api = "cp312"
+[project.optional-dependencies]
+dev = [ "pytest", "black", "ruff" ]
