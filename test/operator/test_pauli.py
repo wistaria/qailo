@@ -5,18 +5,21 @@ def test_x():
     assert q.op.is_hermitian(op)
     assert q.op.is_unitary(op)
     assert q.op.is_identity(q.op.multiply(op, op, [0]))
+    assert q.is_equal(q.op.trace(op), 0)
 
 def test_y():
     op = q.op.y()
     assert q.op.is_hermitian(op)
     assert q.op.is_unitary(op)
     assert q.op.is_identity(q.op.multiply(op, op, [0]))
+    assert q.op.trace(op) == 0
 
 def test_z():
     op = q.op.z()
     assert q.op.is_hermitian(op)
     assert q.op.is_unitary(op)
     assert q.op.is_identity(q.op.multiply(op, op, [0]))
+    assert q.op.trace(op) == 0
 
 def test_xyz():
     # XY = -YX, etc

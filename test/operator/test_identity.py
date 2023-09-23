@@ -7,3 +7,4 @@ def test_identity():
         assert q.op.is_unitary(op)
         assert q.op.is_identity(q.op.multiply(op, op, range(n)))
         assert q.op.is_identity(op)
+        assert q.is_equal(q.op.trace(op), 2**n)
