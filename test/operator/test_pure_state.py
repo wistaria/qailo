@@ -1,5 +1,6 @@
 import qailo as q
 
+
 def test_pure_state():
     n = 2
     sv = q.sv.zero(2)

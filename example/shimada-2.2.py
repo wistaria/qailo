@@ -1,5 +1,6 @@
 import qailo as q
 
+
 def main():
     v = q.sv.zero(3)
     print("input:")
@@ -17,8 +18,10 @@ def main():
     print("probabitily:", q.sv.probability(v))
 
     import numpy as np
-    assert q.is_equal(v[0,0,0], 1/np.sqrt(2))
-    assert q.is_equal(v[1,1,1], 1/np.sqrt(2))
 
-if __name__ == '__main__':
+    assert q.is_equal(v[0, 0, 0], 1 / np.sqrt(2))
+    assert q.is_equal(v[1, 1, 1], 1 / np.sqrt(2))
+
+
+if __name__ == "__main__":
     main()

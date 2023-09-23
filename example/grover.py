@@ -1,8 +1,10 @@
 import qailo as q
 
+
 def oracle(v):
     n = len(v.shape)
     return q.sv.apply(q.op.cz(n), v)
+
 
 def diffusion(v):
     n = len(v.shape)
@@ -15,6 +17,7 @@ def diffusion(v):
         v = q.sv.apply(q.op.h(), v, [i])
     return v
 
+
 def grover(n, iter):
     v = q.sv.zero(n)
     for i in range(n):
@@ -23,10 +26,11 @@ def grover(n, iter):
         v = oracle(v)
         v = diffusion(v)
     return v
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     n = 8
-    iter = 2**(n // 2)
+    iter = 2 ** (n // 2)
     print("# number of qbits =", n)
     print("# iterations = ", iter)
     prob = q.sv.probability(grover(n, iter))

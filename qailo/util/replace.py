@@ -4,4 +4,4 @@ def replace(s, i, c):
     assert 0 <= i and i < len(s)
     assert len(c) == 1
 
-    return s[:i] + c + s[i+1:]
+    return s[:i] + c + s[i + 1 :]

@@ -1,5 +1,6 @@
 import qailo as q
 
+
 def test_identity():
     for n in range(6):
         op = q.op.identity(n)

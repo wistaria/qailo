@@ -1,4 +1,5 @@
 from .vector import vector
 
+
 def probability(v):
-    return abs(vector(v))**2
+    return abs(vector(v)) ** 2
