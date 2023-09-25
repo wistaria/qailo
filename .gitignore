@@ -1,6 +1,5 @@
 build
-__pycache__
-*/__pycache__
-*/*/__pycache__
-qailo/_version.py
-qailo.egg-info
+**/_version.py
+**/*.py[cod]
+**/__pycache__
+**/*.egg-info
