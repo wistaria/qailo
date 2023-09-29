@@ -7,9 +7,24 @@
 * No new classes are introduced.
 * All functions must be less than 30 lines.
 
-### Install
+### Installation
 
-* Prerequisites
-  * python 3
-  * numpy
-  * [optional] pytest
+* prerequisites
+  * python 3.7 or later
+
+* installatio
+  ```bash
+  $ pip install .
+  ```
+
+* tests
+  ```bash
+  $ pip install .[dev]
+  $ pytest
+  ```
+
+* examples
+  ```bash
+  $ python3 example/shimada-2.2.py
+  $ python3 example/grover.py
+  ```
