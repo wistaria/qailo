@@ -4,6 +4,7 @@ from .h import h
 from .phase import s, t
 from .rotation import rx, ry, rz
 from .controlled import controlled, cx, cz
+from .swap import swap
 
 from .pure_state import pure_state
 
@@ -32,6 +33,7 @@ __all__ = [
     controlled,
     cx,
     cz,
+    swap,
     pure_state,
     is_density_matrix,
     is_hermitian,

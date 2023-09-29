@@ -30,5 +30,5 @@ dev = [ "pytest", "black", "ruff" ]
 
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py37']
 include = '\.py$'
