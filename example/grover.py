@@ -1,9 +1,16 @@
 import qailo as q
 
 
-def oracle(v):
+def oracle(v, target):
     n = len(v.shape)
-    return q.sv.apply(q.op.cz(n), v)
+    for i in range(n):
+        if (target >> i) & 1 == 0:
+            v = q.sv.apply(q.op.x(), v, [i])
+    v = q.sv.apply(q.op.cz(n), v)
+    for i in range(n):
+        if (target >> i) & 1 == 0:
+            v = q.sv.apply(q.op.x(), v, [i])
+    return v
 
 
 def diffusion(v):
@@ -18,20 +25,26 @@ def diffusion(v):
     return v
 
 
-def grover(n, iter):
+def grover(n, target, iter):
     v = q.sv.zero(n)
     for i in range(n):
         v = q.sv.apply(q.op.h(), v, [i])
     for k in range(iter):
-        v = oracle(v)
+        v = oracle(v, target)
         v = diffusion(v)
     return v
 
 
 if __name__ == "__main__":
-    n = 8
+    n = 4
+    target = 0b0110
     iter = 2 ** (n // 2)
-    print("# number of qbits =", n)
-    print("# iterations = ", iter)
-    prob = q.sv.probability(grover(n, iter))
-    print(prob[0], prob[-1])
+    print("# number of qbits = {}".format(n))
+    print("# target state = {}".format(q.util.binary2str(n, target)))
+    print("# iterations = {}".format(iter))
+    prob = q.sv.probability(grover(n, target, iter))
+    for i in range(2**n):
+        if i == target:
+            print("* {} {}".format(q.util.binary2str(n, i), prob[i]))
+        else:
+            print("  {} {}".format(q.util.binary2str(n, i), prob[i]))
