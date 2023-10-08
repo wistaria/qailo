@@ -1,9 +1,7 @@
 import numpy as np
 
-from .shape import shape
+from .state_vector import state_vector
 
 
 def zeros(n):
-    v = np.zeros(2**n)
-    v[0] = 1
-    return v.reshape(shape(n))
+    return state_vector(n, 0)
