@@ -13,22 +13,22 @@ license = { file = "LICENSE" }
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
-dynamic = [ "version" ]
-dependencies = [ "numpy" ]
+dynamic = ["version"]
+dependencies = ["matplotlib", "numpy"]
 
 [tool.setuptools.dynamic]
 version = { attr = "qailo._version.version" }
 
 [tool.setuptools.packages.find]
-exclude = [ "build", "tests" ]
+exclude = ["build", "tests"]
 
 [tool.setuptools_scm]
 write_to = "qailo/_version.py"
 
 [project.optional-dependencies]
-dev = [ "pytest", "black", "ruff" ]
+dev = ["pytest", "black", "ruff"]
 
 [tool.black]
 line-length = 88
-target-version = ['py37']
+target-version = ["py37"]
 include = '\.py$'

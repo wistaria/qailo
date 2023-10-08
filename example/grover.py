@@ -2,10 +2,12 @@ import qailo as q
 
 
 def oracle(v, target):
-    n = len(v.shape)
+    n = q.num_qubits(v)
     for i in range(n):
         if (target >> i) & 1 == 0:
             v = q.sv.apply(q.op.x(), v, [i])
+    assert q.is_operator(q.op.cz(n))
+    assert q.is_state_vector(v)
     v = q.sv.apply(q.op.cz(n), v)
     for i in range(n):
         if (target >> i) & 1 == 0:
@@ -14,7 +16,7 @@ def oracle(v, target):
 
 
 def diffusion(v):
-    n = len(v.shape)
+    n = q.num_qubits(v)
     for i in range(n):
         v = q.sv.apply(q.op.h(), v, [i])
         v = q.sv.apply(q.op.x(), v, [i])

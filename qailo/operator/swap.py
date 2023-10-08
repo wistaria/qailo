@@ -1,8 +1,8 @@
 import numpy as np
 
-from ..util.shape import shape
+from .shape import shape
 
 
 def swap():
     op = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
-    return op.reshape(shape(4))
+    return op.reshape(shape(2))

@@ -1,12 +1,16 @@
 import numpy as np
 
+from ..is_operator import is_operator
+from ..num_qubits import num_qubits
 from ..util.letters import letters
 from ..util.replace import replace
 
 
 def multiply(op, opi, pos=None):
-    n = len(opi.shape) // 2
-    m = len(op.shape) // 2
+    assert is_operator(opi)
+    assert is_operator(op)
+    n = num_qubits(opi)
+    m = num_qubits(op)
     if pos is None:
         assert m == n
         pos = range(n)

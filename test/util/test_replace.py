@@ -1,6 +1,6 @@
-import qailo as q
+from qailo.util.replace import replace
 
 
 def test_replace():
-    assert q.util.replace("abcdef", 2, "C") == "abCdef"
-    assert q.util.replace("abcdef", -2, "E") == "abcdEf"
+    assert replace("abcdef", 2, "C") == "abCdef"
+    assert replace("abcdef", -2, "E") == "abcdEf"

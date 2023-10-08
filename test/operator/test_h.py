@@ -1,8 +1,9 @@
 import numpy as np
+from pytest import approx
 
 import qailo as q
 
 
 def test_h():
     assert q.op.is_unitary(q.op.h())
-    assert q.is_equal(q.op.h(), (q.op.x() + q.op.z()) / np.sqrt(2))
+    assert q.op.h() == approx((q.op.x() + q.op.z()) / np.sqrt(2))

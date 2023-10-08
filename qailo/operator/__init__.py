@@ -8,13 +8,10 @@ from .swap import swap
 
 from .pure_state import pure_state
 
-from .is_density_matrix import is_density_matrix
+from .hconj import hconj
 from .is_hermitian import is_hermitian
 from .is_identity import is_identity
-from .is_semi_positive import is_semi_positive
 from .is_unitary import is_unitary
-
-from .hconj import hconj
 from .matrix import matrix
 from .multiply import multiply
 from .trace import trace
@@ -35,12 +32,10 @@ __all__ = [
     cz,
     swap,
     pure_state,
-    is_density_matrix,
+    hconj,
     is_hermitian,
     is_identity,
-    is_semi_positive,
     is_unitary,
-    hconj,
     matrix,
     multiply,
     trace,

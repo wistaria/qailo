@@ -16,12 +16,30 @@ def main():
     print("output:")
     print("state vector:", q.sv.vector(v))
     print("probabitily:", q.sv.probability(v))
+    return v
 
+
+def check(v):
     import numpy as np
 
     assert q.is_equal(v[0, 0, 0], 1 / np.sqrt(2))
     assert q.is_equal(v[1, 1, 1], 1 / np.sqrt(2))
 
 
+def plot(v):
+    import matplotlib.pyplot as plt
+
+    y = q.sv.probability(v)
+    x = range(len(y))
+    _, ax = plt.subplots()
+    ax.bar(x, y, width=0.5, edgecolor="white", linewidth=0.7)
+    plt.show()
+
+
 if __name__ == "__main__":
-    main()
+    import sys
+
+    v = main()
+    check(v)
+    if len(sys.argv) > 1 and sys.argv[1] == "plot":
+        plot(v)

@@ -1,3 +1,5 @@
+from pytest import approx
+
 import qailo as q
 
 
@@ -10,11 +12,11 @@ def test_swap():
     op = q.op.cx()
     op = q.op.multiply(q.op.cx(), op, [1, 0])
     op = q.op.multiply(q.op.cx(), op, [0, 1])
-    assert q.is_equal(op, q.op.swap())
+    assert op == approx(q.op.swap())
 
     v = q.sv.zeros(2)
     v = q.sv.apply(q.op.h(), v, [0])
     v = q.sv.apply(q.op.swap(), v, [0, 1])
     v = q.sv.apply(q.op.h(), v, [1])
     v = q.sv.apply(q.op.swap(), v, [0, 1])
-    assert q.is_equal(v, q.sv.zeros(2))
+    assert v == approx(q.sv.zeros(2))

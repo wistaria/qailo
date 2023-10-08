@@ -1,4 +1,5 @@
 import numpy as np
+from pytest import approx
 
 import qailo as q
 
@@ -9,6 +10,6 @@ def test_fidelity():
         sv1 = sv0
         for i in range(n):
             sv1 = q.sv.apply(q.op.h(), sv1, [i])
-        assert q.is_equal(q.sv.fidelity(sv0, sv0), 1)
-        assert q.is_equal(q.sv.fidelity(sv1, sv1), 1)
-        assert q.is_equal(q.sv.fidelity(sv0, sv1), 1 / np.sqrt(2**n))
+        assert q.sv.fidelity(sv0, sv0) == approx(1)
+        assert q.sv.fidelity(sv1, sv1) == approx(1)
+        assert q.sv.fidelity(sv0, sv1) == approx(1 / np.sqrt(2**n))

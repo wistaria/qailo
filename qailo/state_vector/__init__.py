@@ -4,4 +4,10 @@ from .probability import probability
 from .vector import vector
 from .zeros import zeros
 
-__all__ = [apply, fidelity, probability, vector, zeros]
+__all__ = [
+    apply,
+    fidelity,
+    probability,
+    vector,
+    zeros,
+]

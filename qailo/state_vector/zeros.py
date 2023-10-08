@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..util.shape import shape
+from .shape import shape
 
 
 def zeros(n):
