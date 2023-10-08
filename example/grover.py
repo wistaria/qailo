@@ -26,7 +26,7 @@ def diffusion(v):
 
 
 def grover(n, target, iter):
-    v = q.sv.zero(n)
+    v = q.sv.zeros(n)
     for i in range(n):
         v = q.sv.apply(q.op.h(), v, [i])
     for k in range(iter):

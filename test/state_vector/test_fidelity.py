@@ -5,7 +5,7 @@ import qailo as q
 
 def test_fidelity():
     for n in range(8):
-        sv0 = q.sv.zero(n)
+        sv0 = q.sv.zeros(n)
         sv1 = sv0
         for i in range(n):
             sv1 = q.sv.apply(q.op.h(), sv1, [i])

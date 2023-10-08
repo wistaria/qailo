@@ -2,7 +2,7 @@ import qailo as q
 
 
 def main():
-    v = q.sv.zero(3)
+    v = q.sv.zeros(3)
     print("input:")
     print("state vector:", q.sv.vector(v))
     print("probabitily:", q.sv.probability(v))
