@@ -6,8 +6,6 @@ from .rotation import rx, ry, rz
 from .controlled import controlled, cx, cz
 from .swap import swap
 
-from .pure_state import pure_state
-
 from .hconj import hconj
 from .is_hermitian import is_hermitian
 from .is_identity import is_identity
@@ -31,7 +29,6 @@ __all__ = [
     cx,
     cz,
     swap,
-    pure_state,
     hconj,
     is_hermitian,
     is_identity,

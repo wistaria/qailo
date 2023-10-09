@@ -1,5 +1,3 @@
-import numpy as np
-
 from .state_vector import state_vector
 
 
