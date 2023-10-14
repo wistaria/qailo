@@ -8,4 +8,5 @@ def mps(n, c=0):
         t = np.zeros((1, 2, 1))
         t[0, (c >> (n - i - 1)) & 1, 0] = 1
         tensors.append(t)
-    return [range(n), tensors]
+    # qubit2tensor, tensor2qubit, canonical_position, tensors
+    return [range(n), range(n), 0, tensors]

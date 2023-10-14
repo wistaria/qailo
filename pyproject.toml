@@ -19,11 +19,11 @@ dependencies = ["matplotlib", "numpy"]
 [tool.setuptools.dynamic]
 version = { attr = "qailo._version.version" }
 
-[tool.setuptools.packages.find]
-exclude = ["build", "tests"]
-
 [tool.setuptools_scm]
-write_to = "qailo/_version.py"
+write_to = "src/qailo/_version.py"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
 
 [project.optional-dependencies]
 dev = ["pytest", "black", "ruff"]

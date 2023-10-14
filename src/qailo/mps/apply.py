@@ -23,8 +23,8 @@ def apply_two(op, t0, t1, maxdim=None):
     for i in range(len(S)):
         if S[i] > 1e-12:
             d = i + 1
-    # print(shape0, shape1, m.shape, U.shape, S.shape, V.shape)
-    # print(S, d)
+    if maxdim is not None:
+        d = min(d, maxdim)
     return (U[:, :d] * np.sqrt(S[:d])).reshape((shape0[0], 2, d)), (
         V[:d, :].transpose() * np.sqrt(S[:d])
     ).transpose().reshape((d, 2, shape1[2]))
@@ -32,7 +32,7 @@ def apply_two(op, t0, t1, maxdim=None):
 
 def apply(op, mps, pos, maxdim=None):
     assert is_operator(op) and len(pos) == num_qubits(op)
-    tensors = mps[1]
+    tensors = mps[3]
     if num_qubits(op) == 1:
         tensors[pos[0]] = apply_one(op, tensors[pos[0]])
     elif num_qubits(op) == 2:
@@ -52,4 +52,4 @@ def apply(op, mps, pos, maxdim=None):
             )
     else:
         assert False
-    return [mps[0], tensors]
+    return [mps[0], mps[1], mps[2], tensors]
