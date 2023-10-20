@@ -3,7 +3,8 @@ from .pauli import x, y, z
 from .h import h
 from .phase import s, t
 from .rotation import rx, ry, rz
-from .controlled import controlled, cx, cz
+from .controlled import controlled, cx, cz, control_begin, control_propagate, control_end
+
 from .swap import swap
 
 from .hconj import hconj
@@ -28,6 +29,9 @@ __all__ = [
     controlled,
     cx,
     cz,
+    control_begin,
+    control_propagate,
+    control_end,
     swap,
     hconj,
     is_hermitian,

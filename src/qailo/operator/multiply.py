@@ -23,4 +23,6 @@ def multiply(op, opi, pos=None):
     for i in range(m):
         ss_opi = replace(ss_opi, pos[i], ss_op[m + i])
         ss_to = replace(ss_to, pos[i], ss_op[i])
+    print(opi.shape, op.shape)
+    print("{},{}->{}".format(ss_opi, ss_op, ss_to))
     return np.einsum("{},{}->{}".format(ss_opi, ss_op, ss_to), opi, op)
