@@ -22,7 +22,7 @@ jobs:
           pip install .[dev]
       - name: ruff
         run: |
-          ruff
+          ruff .
       - name: pytest
         run: |
           pytest
