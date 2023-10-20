@@ -29,6 +29,10 @@ package-dir = { "" = "src" }
 dev = ["pytest", "black", "ruff"]
 
 [tool.black]
-line-length = 88
-target-version = ["py37"]
+line-length = 120
+target-version = ["py38"]
 include = '\.py$'
+
+[tool.ruff]
+line-length = 120
+target-version = "py38"

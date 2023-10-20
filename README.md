@@ -10,11 +10,17 @@
 ### Installation
 
 * prerequisites
-  * python 3.7 or later
+  * python 3.8 or later
 
 * installation
   ```bash
   $ pip install .
+  ```
+
+* for development
+  ```bash
+  $ pip install matplotlib numpy pytest black ruff wheel
+  $ pip install --no-build-isolation -ve .
   ```
 
 * tests

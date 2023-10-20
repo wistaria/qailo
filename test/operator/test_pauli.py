@@ -29,12 +29,6 @@ def test_z():
 
 def test_xyz():
     # XY = -YX, etc
-    assert q.op.multiply(q.op.x(), q.op.y(), [0]) == approx(
-        -1 * q.op.multiply(q.op.y(), q.op.x(), [0])
-    )
-    assert q.op.multiply(q.op.y(), q.op.z(), [0]) == approx(
-        -1 * q.op.multiply(q.op.z(), q.op.y(), [0])
-    )
-    assert q.op.multiply(q.op.z(), q.op.x(), [0]) == approx(
-        -1 * q.op.multiply(q.op.x(), q.op.z(), [0])
-    )
+    assert q.op.multiply(q.op.x(), q.op.y(), [0]) == approx(-1 * q.op.multiply(q.op.y(), q.op.x(), [0]))
+    assert q.op.multiply(q.op.y(), q.op.z(), [0]) == approx(-1 * q.op.multiply(q.op.z(), q.op.y(), [0]))
+    assert q.op.multiply(q.op.z(), q.op.x(), [0]) == approx(-1 * q.op.multiply(q.op.x(), q.op.z(), [0]))
