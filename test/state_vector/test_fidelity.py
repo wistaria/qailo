@@ -1,7 +1,6 @@
 import numpy as np
-from pytest import approx
-
 import qailo as q
+from pytest import approx
 
 
 def test_fidelity():

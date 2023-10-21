@@ -1,7 +1,7 @@
 import numpy as np
 
-from ..is_state_vector import is_state_vector
 from ..is_operator import is_operator
+from ..is_state_vector import is_state_vector
 from ..num_qubits import num_qubits
 from ..util.letters import letters
 from ..util.replace import replace

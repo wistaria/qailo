@@ -1,8 +1,7 @@
-from ._version import version
-
-from . import state_vector, operator, mps, util
-from . import state_vector as sv
+from . import mps, operator, state_vector, util
 from . import operator as op
+from . import state_vector as sv
+from ._version import version
 from .is_density_matrix import is_density_matrix
 from .is_equal import is_equal
 from .is_operator import is_operator
@@ -10,13 +9,13 @@ from .is_state_vector import is_state_vector
 from .num_qubits import num_qubits
 
 __all__ = [
-    version,
-    state_vector,
-    operator,
     mps,
+    operator,
+    state_vector,
     util,
-    sv,
     op,
+    sv,
+    version,
     is_density_matrix,
     is_equal,
     is_operator,

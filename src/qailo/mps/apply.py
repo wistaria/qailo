@@ -15,7 +15,9 @@ def apply_two(op, t0, t1, maxdim=None):
 
     shape0 = t0.shape
     shape1 = t1.shape
-    m = np.einsum("abc,cde,bdfg->afge", t0, t1, op).reshape((t0.shape[0] * 2, 2 * t1.shape[2]))
+    m = np.einsum("abc,cde,bdfg->afge", t0, t1, op).reshape(
+        (t0.shape[0] * 2, 2 * t1.shape[2])
+    )
     U, S, V = np.linalg.svd(m, full_matrices=False)
     d = 0
     for i in range(len(S)):
@@ -37,13 +39,17 @@ def apply(op, mps, pos, maxdim=None):
         r = range(pos[1] - 1, pos[0], -1) if pos[0] < pos[1] else range(pos[1], pos[0])
         for k in r:
             print("swap between {} and {}".format(k, k + 1))
-            tensors[k], tensors[k + 1] = apply_two(swap(), tensors[k], tensors[k + 1], maxdim)
+            tensors[k], tensors[k + 1] = apply_two(
+                swap(), tensors[k], tensors[k + 1], maxdim
+            )
         k = pos[0] if pos[0] < pos[1] else pos[0] - 1
         print("op between {} and {}".format(k, k + 1))
         tensors[k], tensors[k + 1] = apply_two(op, tensors[k], tensors[k + 1], maxdim)
         for k in reversed(r):
             print("swap between {} and {}".format(k, k + 1))
-            tensors[k], tensors[k + 1] = apply_two(swap(), tensors[k], tensors[k + 1], maxdim)
+            tensors[k], tensors[k + 1] = apply_two(
+                swap(), tensors[k], tensors[k + 1], maxdim
+            )
     else:
         assert False
     return [mps[0], mps[1], mps[2], tensors]

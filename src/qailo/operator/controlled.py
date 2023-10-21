@@ -1,8 +1,8 @@
 import numpy as np
 
 from ..is_operator import is_operator
-from .matrix import matrix
 from ..num_qubits import num_qubits
+from .matrix import matrix
 from .pauli import x, z
 from .shape import shape
 

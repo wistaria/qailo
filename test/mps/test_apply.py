@@ -1,7 +1,7 @@
-from pytest import approx
 import random
 
 import qailo as q
+from pytest import approx
 
 
 def apply(op, m0, m1, v, pos, maxdim=None):
