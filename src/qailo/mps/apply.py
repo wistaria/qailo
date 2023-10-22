@@ -3,6 +3,7 @@ import numpy as np
 from ..is_operator import is_operator
 from ..num_qubits import num_qubits
 from ..operator.swap import swap
+from .mps import mps
 
 
 def apply_one(op, t):
@@ -30,9 +31,9 @@ def apply_two(op, t0, t1, maxdim=None):
     ).transpose().reshape((d, 2, shape1[2]))
 
 
-def apply(op, mps, pos, maxdim=None):
+def apply(op, m, pos, maxdim=None):
     assert is_operator(op) and len(pos) == num_qubits(op)
-    tensors = mps[3]
+    tensors = m.tensors_
     if num_qubits(op) == 1:
         tensors[pos[0]] = apply_one(op, tensors[pos[0]])
     elif num_qubits(op) == 2:
@@ -52,4 +53,4 @@ def apply(op, mps, pos, maxdim=None):
             )
     else:
         assert False
-    return [mps[0], mps[1], mps[2], tensors]
+    return mps(tensors, m.q2t_, m.t2q_, m.cp_)

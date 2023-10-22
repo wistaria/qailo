@@ -16,8 +16,8 @@ def test_apply():
     p = 100
     maxdim = 4
 
-    m0 = q.mps.mps(n)
-    m1 = q.mps.mps(n)
+    m0 = q.mps.product_state(n)
+    m1 = q.mps.product_state(n)
     v = q.sv.state_vector(n)
 
     for _ in range(p):
@@ -42,14 +42,9 @@ def test_apply():
             elif t == 1:
                 print("apply cz on {} and {}".format(i, j))
                 m0, m1, v = apply(q.op.cz(), m0, m1, v, [i, j], maxdim)
-    print(q.sv.vector(q.mps.state_vector(m0)))
-    print(q.sv.vector(q.mps.state_vector(m1)))
-    print(q.sv.vector(v))
-
-    for i in range(n):
-        print("shape {}: {}".format(i, m0[3][i].shape))
-    for i in range(n):
-        print("shape {}: {}".format(i, m1[3][i].shape))
+    # print(q.sv.vector(q.mps.state_vector(m0)))
+    # print(q.sv.vector(q.mps.state_vector(m1)))
+    # print(q.sv.vector(v))
 
     f0 = q.sv.fidelity(q.mps.state_vector(m0), v)
     f1 = q.sv.fidelity(q.mps.state_vector(m1), v)

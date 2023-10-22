@@ -20,5 +20,6 @@ __all__ = [
     is_equal,
     is_operator,
     is_state_vector,
+    mps,
     num_qubits,
 ]
