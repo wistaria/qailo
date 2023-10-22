@@ -15,11 +15,16 @@ class mps:
         tensors [cp+1...n-1]: bottom canonical
     """
 
-    def __init__(self, tensors, q2t, t2q, cp):
+    def __init__(self, tensors, q2t, t2q, cp=None):
         self.tensors_ = tensors
         self.q2t_ = q2t
         self.t2q_ = t2q
-        self.cp_ = cp
+        if cp is None:
+            self.cp_ = 0
+            self.canonicalize(self.num_qubits() - 1)
+            self.canonicalize(0)
+        else:
+            self.cp_ = cp
         mps.check(self)
 
     def num_qubits(self):
@@ -45,6 +50,30 @@ class mps:
 
     def canonical_position(self):
         return self.cp()
+
+    def canonicalize(self, p):
+        assert 0 <= p and p < self.num_qubits()
+        if self.cp() < p:
+            for t in range(self.cp(), p):
+                dims = list(self.tensors_[t].shape)
+                A = self.tensors_[t].reshape((dims[0] * dims[1], dims[2]))
+                U, S, Vh = np.linalg.svd(A, full_matrices=False)
+                dims[2] = S.shape[0]
+                self.tensors_[t] = U.reshape(dims)
+                self.tensors_[t + 1] = np.einsum(
+                    "i,ij,jkl->ikl", S, Vh, self.tensors_[t + 1]
+                )
+        else:
+            for t in range(self.cp(), p, -1):
+                dims = list(self.tensors_[t].shape)
+                A = self.tensors_[t].reshape((dims[0], dims[1] * dims[2]))
+                U, S, Vh = np.linalg.svd(A, full_matrices=False)
+                dims[0] = S.shape[0]
+                self.tensors_[t] = Vh.reshape(dims)
+                self.tensors_[t - 1] = np.einsum(
+                    "ijk,kl,l->ijl", self.tensors_[t - 1], U, S
+                )
+        self.cp_ = p
 
     @staticmethod
     def check(mps):
