@@ -1,7 +1,7 @@
-from .type import is_operator, num_qubits
 from .hconj import hconj
 from .is_identity import is_identity
 from .multiply import multiply
+from .type import is_operator, num_qubits
 
 
 def is_unitary(op):

@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def is_density_matrix(q):
     return (
         q.shape[-1] == 1

@@ -1,7 +1,7 @@
 import numpy as np
 
-from . import type as sv
 from ..util.letters import letters
+from . import type as sv
 
 
 def pure_state(v):

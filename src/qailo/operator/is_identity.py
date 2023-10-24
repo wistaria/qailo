@@ -1,7 +1,7 @@
 import numpy as np
 
-from .type import is_operator, num_qubits
 from .identity import identity
+from .type import is_operator, num_qubits
 
 
 def is_identity(op):

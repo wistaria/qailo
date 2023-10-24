@@ -1,9 +1,10 @@
 import numpy as np
 
-from .type import is_mps, num_qubits
-from .mps import tensor
 from ..util.letters import letters
 from ..util.replace import replace
+from .mps import tensor
+from .type import is_mps, num_qubits
+
 
 def state_vector(mps):
     assert is_mps(mps)

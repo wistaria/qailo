@@ -1,8 +1,8 @@
 import numpy as np
 
-from .type import is_operator, num_qubits
 from .matrix import matrix
 from .pauli import x, z
+from .type import is_operator, num_qubits
 
 
 def controlled(u):

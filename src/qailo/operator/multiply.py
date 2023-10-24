@@ -1,8 +1,8 @@
 import numpy as np
 
-from .type import is_operator, num_qubits
 from ..util.letters import letters
 from ..util.replace import replace
+from .type import is_operator, num_qubits
 
 
 def multiply(op, opi, pos=None):

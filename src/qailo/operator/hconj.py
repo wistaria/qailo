@@ -1,7 +1,7 @@
 import numpy as np
 
-from .type import is_operator, num_qubits
 from ..util.letters import letters
+from .type import is_operator, num_qubits
 
 
 def hconj(op):

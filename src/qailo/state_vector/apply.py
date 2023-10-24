@@ -1,9 +1,9 @@
 import numpy as np
 
-from . import type as sv
 from ..operator import type as op
 from ..util.letters import letters
 from ..util.replace import replace
+from . import type as sv
 
 
 def apply(p, v, pos=None):

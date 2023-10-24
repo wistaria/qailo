@@ -19,8 +19,8 @@ from .pauli import x, y, z
 from .phase import s, t
 from .rotation import rx, ry, rz
 from .swap import swap
-from .type import is_density_matrix, is_operator, num_qubits
 from .trace import trace
+from .type import is_density_matrix, is_operator, num_qubits
 
 __all__ = [
     control_begin,

@@ -1,8 +1,10 @@
 from copy import deepcopy
+
 import numpy as np
 
 from ..operator import type as op
 from ..operator.swap import swap
+
 
 class MPS:
     """
@@ -34,7 +36,6 @@ class MPS:
         if normalize:
             self.normalize()
 
-
     def num_qubits(self):
         return len(self._tensors)
 
@@ -62,7 +63,9 @@ class MPS:
     def norm(self):
         A = np.identity(2)
         for t in range(self.num_qubits()):
-            A = np.einsum("ij,ikl,jkm->lm", A, self._tensors[t], self._tensors[t].conj())
+            A = np.einsum(
+                "ij,ikl,jkm->lm", A, self._tensors[t], self._tensors[t].conj()
+            )
         return np.sqrt(np.trace(A))
 
     def normalize(self):
@@ -102,15 +105,14 @@ class MPS:
         self._cp[0] = min(self._cp[0], s)
         self._cp[1] = max(self._cp[1], s)
 
-
     def _apply_two(self, p, s, maxdim=None, reverse=False):
         """
         apply 2-qubit operator on neighboring tensors, s and s+1
         """
         assert op.num_qubits(p) == 2
-        self.canonicalize(s+1)
+        self.canonicalize(s + 1)
         t0 = self._tensors[s]
-        t1 = self._tensors[s+1]
+        t1 = self._tensors[s + 1]
         dim0 = t0.shape[0]
         dim1 = t1.shape[2]
         if not reverse:
@@ -123,8 +125,9 @@ class MPS:
         U, S, Vh = np.linalg.svd(t, full_matrices=False)
         d = S.shape[0] if maxdim is None else min(S.shape[0], maxdim)
         self._tensors[s] = U[:, :d].reshape(dim0, p0, d)
-        self._tensors[s + 1] = np.einsum("i,ijk->ijk", S[:d], Vh[:d, :].reshape(d, p1, dim1))
-
+        self._tensors[s + 1] = np.einsum(
+            "i,ijk->ijk", S[:d], Vh[:d, :].reshape(d, p1, dim1)
+        )
 
     def _swap_tensors(self, s, maxdim=None):
         """
@@ -132,10 +135,9 @@ class MPS:
         """
         assert s in range(0, self.num_qubits() - 1)
         self._apply_two(swap(), s, maxdim=maxdim)
-        p0, p1 = self._t2q[s], self._t2q[s+1]
-        self._q2t[p0], self._q2t[p1] = s+1, s
-        self._t2q[s], self._t2q[s+1] = p1, p0
-
+        p0, p1 = self._t2q[s], self._t2q[s + 1]
+        self._q2t[p0], self._q2t[p1] = s + 1, s
+        self._t2q[s], self._t2q[s + 1] = p1, p0
 
     def _move_qubit(self, p, s, maxdim=None):
         if self.q2t(p) != s:
@@ -145,7 +147,7 @@ class MPS:
             self._swap_tensors(u, maxdim=maxdim)
         for u in range(self._q2t[p], s + 1, -1):
             print(f"swap tensors {u-1} and {u}")
-            self._swap_tensors(u-1, maxdim=maxdim)
+            self._swap_tensors(u - 1, maxdim=maxdim)
 
     def apply(self, p, qpos, maxdim=None):
         assert op.is_operator(p) and len(qpos) == op.num_qubits(p)
@@ -154,10 +156,10 @@ class MPS:
         elif op.num_qubits(p) == 2:
             tpos = [self._q2t[qpos[0]], self._q2t[qpos[1]]]
             if tpos[0] < tpos[1]:
-                self._move_qubit(qpos[1], tpos[0]+1)
+                self._move_qubit(qpos[1], tpos[0] + 1)
                 self._apply_two(p, tpos[0], maxdim=maxdim)
             else:
-                self._move_qubit(qpos[0], tpos[1]+1)
+                self._move_qubit(qpos[0], tpos[1] + 1)
                 self._apply_two(p, tpos[1], maxdim=maxdim, reverse=True)
         else:
             raise ValueError
@@ -193,7 +195,6 @@ def check(mps):
     assert mps.canonical_position(1) in range(n)
 
     return True
-
 
 
 def product_state(n, c=0):
