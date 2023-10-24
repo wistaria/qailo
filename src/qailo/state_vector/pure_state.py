@@ -1,14 +1,13 @@
 import numpy as np
 
-from ..is_state_vector import is_state_vector
-from ..num_qubits import num_qubits
+from . import type as sv
 from ..util.letters import letters
 
 
-def pure_state(sv):
-    assert is_state_vector(sv)
-    n = num_qubits(sv)
-    v = sv / np.linalg.norm(sv)
+def pure_state(v):
+    assert sv.is_state_vector(v)
+    n = sv.num_qubits(v)
+    v = v / np.linalg.norm(v)
     ss_from0 = letters()[: n + 1]
     ss_from1 = letters()[n + 1 : 2 * n + 2]
     ss_to = (

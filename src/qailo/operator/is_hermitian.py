@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..operator.hconj import hconj
+from .hconj import hconj
 
 
 def is_hermitian(op):

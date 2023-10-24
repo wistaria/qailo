@@ -5,8 +5,8 @@ from pytest import approx
 
 
 def apply(op, m0, m1, v, pos, maxdim=None):
-    m0 = q.mps.apply(op, m0, pos)
-    m1 = q.mps.apply(op, m1, pos, maxdim)
+    m0.apply(op, pos)
+    m1.apply(op, pos, maxdim)
     v = q.sv.apply(op, v, pos)
     return m0, m1, v
 

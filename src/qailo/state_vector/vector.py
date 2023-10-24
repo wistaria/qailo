@@ -1,8 +1,7 @@
-from ..is_state_vector import is_state_vector
-from ..num_qubits import num_qubits
+from . import type as sv
 
 
-def vector(sv):
-    assert is_state_vector(sv)
-    n = num_qubits(sv)
-    return sv.reshape([2**n])
+def vector(v):
+    assert sv.is_state_vector(v)
+    n = sv.num_qubits(v)
+    return v.reshape((2**n,))

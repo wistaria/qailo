@@ -1,15 +1,22 @@
 import numpy as np
 
-from ..state_vector.shape import shape
+from .type import is_mps, num_qubits
+from .mps import tensor
 from ..util.letters import letters
-
+from ..util.replace import replace
 
 def state_vector(mps):
-    n = mps.num_qubits()
-    v = mps.tensors_[0]
-    for i in range(1, n):
-        ss_v0 = letters()[: i + 2]
-        ss_v1 = letters()[i + 1 : i + 4]
-        ss_to = letters()[: i + 1] + letters()[i + 2 : i + 4]
-        v = np.einsum("{},{}->{}".format(ss_v0, ss_v1, ss_to), v, mps.tensors_[i])
-    return v.reshape(shape(n))
+    assert is_mps(mps)
+    n = num_qubits(mps)
+    v = tensor(mps, 0)
+    for t in range(1, n):
+        ss_v0 = letters()[: t + 2]
+        ss_v1 = letters()[t + 1 : t + 4]
+        ss_to = letters()[: t + 1] + letters()[t + 2 : t + 4]
+        v = np.einsum(f"{ss_v0},{ss_v1}->{ss_to}", v, tensor(mps, t))
+    v = v.reshape((2,) * n)
+    ss_from = letters()[:n]
+    ss_to = ss_from
+    for p in range(n):
+        ss_to = replace(ss_to, p, ss_from[mps.q2t(p)])
+    return np.einsum(f"{ss_from}->{ss_to}", v).reshape((2,) * n + (1,))

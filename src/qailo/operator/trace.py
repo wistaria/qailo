@@ -1,8 +1,6 @@
 import numpy as np
 
-from ..is_density_matrix import is_density_matrix
-from ..is_operator import is_operator
-from ..num_qubits import num_qubits
+from .type import is_density_matrix, is_operator, num_qubits
 from ..util.letters import letters
 from ..util.replace import replace
 

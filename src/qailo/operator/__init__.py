@@ -11,6 +11,7 @@ from .hconj import hconj
 from .identity import identity
 from .is_hermitian import is_hermitian
 from .is_identity import is_identity
+from .is_semi_positive import is_semi_positive
 from .is_unitary import is_unitary
 from .matrix import matrix
 from .multiply import multiply
@@ -18,6 +19,7 @@ from .pauli import x, y, z
 from .phase import s, t
 from .rotation import rx, ry, rz
 from .swap import swap
+from .type import is_density_matrix, is_operator, num_qubits
 from .trace import trace
 
 __all__ = [
@@ -32,6 +34,7 @@ __all__ = [
     identity,
     is_hermitian,
     is_identity,
+    is_semi_positive,
     is_unitary,
     matrix,
     multiply,
@@ -44,5 +47,8 @@ __all__ = [
     ry,
     rz,
     swap,
+    is_density_matrix,
+    is_operator,
+    num_qubits,
     trace,
 ]
