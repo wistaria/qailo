@@ -1,8 +1,9 @@
+import numpy as np
 import qailo as q
 
 
 def main():
-    v = q.sv.zeros(3)
+    v = q.sv.state_vector(3)
     print("input:")
     print("state vector:", q.sv.vector(v))
     print("probabitily:", q.sv.probability(v))
@@ -20,10 +21,8 @@ def main():
 
 
 def check(v):
-    import numpy as np
-
-    assert q.is_equal(v[0, 0, 0], 1 / np.sqrt(2))
-    assert q.is_equal(v[1, 1, 1], 1 / np.sqrt(2))
+    assert np.allclose(v[0, 0, 0], 1 / np.sqrt(2))
+    assert np.allclose(v[1, 1, 1], 1 / np.sqrt(2))
 
 
 def plot(v):

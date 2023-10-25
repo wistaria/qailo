@@ -2,12 +2,12 @@ import qailo as q
 
 
 def oracle(v, target):
-    n = q.num_qubits(v)
+    n = q.sv.num_qubits(v)
     for i in range(n):
         if (target >> i) & 1 == 0:
             v = q.sv.apply(q.op.x(), v, [i])
-    assert q.is_operator(q.op.cz(n))
-    assert q.is_state_vector(v)
+    assert q.op.is_operator(q.op.cz(n))
+    assert q.sv.is_state_vector(v)
     v = q.sv.apply(q.op.cz(n), v)
     for i in range(n):
         if (target >> i) & 1 == 0:
@@ -16,7 +16,7 @@ def oracle(v, target):
 
 
 def diffusion(v):
-    n = q.num_qubits(v)
+    n = q.sv.num_qubits(v)
     for i in range(n):
         v = q.sv.apply(q.op.h(), v, [i])
         v = q.sv.apply(q.op.x(), v, [i])
@@ -28,7 +28,7 @@ def diffusion(v):
 
 
 def grover(n, target, iter):
-    v = q.sv.zeros(n)
+    v = q.sv.state_vector(n)
     for i in range(n):
         v = q.sv.apply(q.op.h(), v, [i])
     for k in range(iter):
