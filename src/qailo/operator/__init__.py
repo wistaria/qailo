@@ -8,14 +8,10 @@ from .controlled import (
 )
 from .hconj import hconj
 from .identity import identity
-from .is_close import is_close
-from .is_hermitian import is_hermitian
-from .is_identity import is_identity
-from .is_semi_positive import is_semi_positive
-from .is_unitary import is_unitary
 from .matrix import matrix
 from .multiply import multiply
 from .one_qubit import h, rx, ry, rz, s, t, x, y, z
+from .property import is_close, is_hermitian, is_identity, is_semi_positive, is_unitary
 from .swap import swap
 from .trace import trace
 from .type import is_density_matrix, is_operator, num_qubits
