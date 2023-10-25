@@ -13,8 +13,8 @@ def apply(op, m0, m1, v, pos, maxdim=None):
 
 def test_apply():
     n = 8
-    p = 100
-    maxdim = 4
+    p = 64
+    maxdim = 2
 
     m0 = q.mps.product_state(n)
     m1 = q.mps.product_state(n)
@@ -35,16 +35,13 @@ def test_apply():
                 print("apply s on {}".format(i))
                 m0, m1, v = apply(q.op.t(), m0, m1, v, [i], maxdim)
         else:
-            t = random.randrange(3)
+            t = random.randrange(2)
             if t == 0:
                 print("apply cx on {} and {}".format(i, j))
                 m0, m1, v = apply(q.op.cx(), m0, m1, v, [i, j], maxdim)
             elif t == 1:
                 print("apply cz on {} and {}".format(i, j))
                 m0, m1, v = apply(q.op.cz(), m0, m1, v, [i, j], maxdim)
-    # print(q.sv.vector(q.mps.state_vector(m0)))
-    # print(q.sv.vector(q.mps.state_vector(m1)))
-    # print(q.sv.vector(v))
 
     f0 = q.sv.fidelity(q.mps.state_vector(m0), v)
     f1 = q.sv.fidelity(q.mps.state_vector(m1), v)

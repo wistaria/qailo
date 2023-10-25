@@ -63,9 +63,8 @@ class MPS:
     def norm(self):
         A = np.identity(2)
         for t in range(self.num_qubits()):
-            A = np.einsum(
-                "ij,ikl,jkm->lm", A, self._tensors[t], self._tensors[t].conj()
-            )
+            A = np.einsum("ij,jkl->ikl", A, self._tensors[t])
+            A = np.einsum("ijk,ijl->kl", A, self._tensors[t].conj())
         return np.sqrt(np.trace(A))
 
     def normalize(self):
@@ -141,18 +140,18 @@ class MPS:
 
     def _move_qubit(self, p, s, maxdim=None):
         if self.q2t(p) != s:
-            print(f"moving qubit {p} at {self.q2t(p)} to {s}")
-        for u in range(self._q2t[p], s - 1):
-            print(f"swap tensors {u} and {u+1}")
-            self._swap_tensors(u, maxdim=maxdim)
-        for u in range(self._q2t[p], s + 1, -1):
-            print(f"swap tensors {u-1} and {u}")
-            self._swap_tensors(u - 1, maxdim=maxdim)
+            # print(f"moving qubit {p} at {self._q2t[p]} to {s}")
+            for u in range(self._q2t[p], s):
+                # print(f"swap tensors {u} and {u+1}")
+                self._swap_tensors(u, maxdim=maxdim)
+            for u in range(self._q2t[p], s, -1):
+                # print(f"swap tensors {u-1} and {u}")
+                self._swap_tensors(u - 1, maxdim=maxdim)
 
     def apply(self, p, qpos, maxdim=None):
         assert op.is_operator(p) and len(qpos) == op.num_qubits(p)
         if op.num_qubits(p) == 1:
-            return self._apply_one(p, self._q2t[qpos[0]])
+            self._apply_one(p, self._q2t[qpos[0]])
         elif op.num_qubits(p) == 2:
             tpos = [self._q2t[qpos[0]], self._q2t[qpos[1]]]
             if tpos[0] < tpos[1]:
@@ -208,7 +207,4 @@ def product_state(n, c=0):
 
 
 def norm(mps):
-    A = np.identity(2)
-    for t in range(mps.num_qubits()):
-        A = np.einsum("ij,ikl,jkm->lm", A, tensor(mps, t), tensor(mps, t).conj())
-    return np.sqrt(np.trace(A))
+    return mps.norm()
