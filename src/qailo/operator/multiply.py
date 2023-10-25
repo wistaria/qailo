@@ -1,7 +1,6 @@
 import numpy as np
 
-from ..util.letters import letters
-from ..util.replace import replace
+from ..util.strops import letters, replace
 from .type import is_operator, num_qubits
 
 

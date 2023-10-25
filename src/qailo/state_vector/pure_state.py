@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..util.letters import letters
+from ..util.strops import letters
 from . import type as sv
 
 

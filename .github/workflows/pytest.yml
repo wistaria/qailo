@@ -26,4 +26,7 @@ jobs:
       - name: pytest
         run: |
           pytest
-          for p in $(ls example/*.py); do python3 $p; done
+      - name: example
+        run: |
+          sh example/run/sh
+  

@@ -1,4 +1,4 @@
-from qailo.util.replace import replace
+from qailo.util.strops import replace
 
 
 def test_replace():

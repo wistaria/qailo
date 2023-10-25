@@ -1,8 +1,7 @@
 import numpy as np
 
 from ..operator import type as op
-from ..util.letters import letters
-from ..util.replace import replace
+from ..util.strops import letters, replace
 from . import type as sv
 
 

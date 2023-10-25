@@ -1,7 +1,7 @@
 import numpy as np
 
 from .matrix import matrix
-from .pauli import x, z
+from .one_qubit import x, z
 from .type import is_operator, num_qubits
 
 

@@ -6,7 +6,7 @@ from .controlled import (
     cx,
     cz,
 )
-from .h import h
+from .one_qubit import h, rx, ry, rz, s, t, x, y, z
 from .hconj import hconj
 from .identity import identity
 from .is_close import is_close
@@ -16,9 +16,6 @@ from .is_semi_positive import is_semi_positive
 from .is_unitary import is_unitary
 from .matrix import matrix
 from .multiply import multiply
-from .pauli import x, y, z
-from .phase import s, t
-from .rotation import rx, ry, rz
 from .swap import swap
 from .trace import trace
 from .type import is_density_matrix, is_operator, num_qubits
@@ -30,7 +27,7 @@ __all__ = [
     controlled,
     cx,
     cz,
-    h,
+    h, rx, ry, rz, s, t, x, y, z,
     hconj,
     identity,
     is_close,
@@ -40,14 +37,6 @@ __all__ = [
     is_unitary,
     matrix,
     multiply,
-    x,
-    y,
-    z,
-    s,
-    t,
-    rx,
-    ry,
-    rz,
     swap,
     is_density_matrix,
     is_operator,
