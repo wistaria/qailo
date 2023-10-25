@@ -30,7 +30,7 @@ def test_swap():
     assert len(v0) == len(v1)
     print(v0)
     print(v1)
-    assert q.is_close(v0, v1)
+    assert q.sv.is_close(v0, v1)
 
 
 def test_move():
@@ -59,7 +59,7 @@ def test_move():
     assert len(v0) == len(v1)
     print(v0)
     print(v1)
-    assert q.is_close(v0, v1)
+    assert q.sv.is_close(v0, v1)
 
 
 if __name__ == "__main__":

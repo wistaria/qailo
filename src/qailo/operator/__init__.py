@@ -9,6 +9,7 @@ from .controlled import (
 from .h import h
 from .hconj import hconj
 from .identity import identity
+from .is_close import is_close
 from .is_hermitian import is_hermitian
 from .is_identity import is_identity
 from .is_semi_positive import is_semi_positive
@@ -32,6 +33,7 @@ __all__ = [
     h,
     hconj,
     identity,
+    is_close,
     is_hermitian,
     is_identity,
     is_semi_positive,

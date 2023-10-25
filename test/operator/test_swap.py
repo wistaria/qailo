@@ -10,11 +10,11 @@ def test_swap():
     op = q.op.cx()
     op = q.op.multiply(q.op.cx(), op, [1, 0])
     op = q.op.multiply(q.op.cx(), op, [0, 1])
-    assert q.is_close(op, q.op.swap())
+    assert q.op.is_close(op, q.op.swap())
 
     v = q.sv.state_vector(2)
     v = q.sv.apply(q.op.h(), v, [0])
     v = q.sv.apply(q.op.swap(), v, [0, 1])
     v = q.sv.apply(q.op.h(), v, [1])
     v = q.sv.apply(q.op.swap(), v, [0, 1])
-    assert q.is_close(v, q.sv.state_vector(2))
+    assert q.op.is_close(v, q.sv.state_vector(2))

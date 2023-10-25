@@ -7,4 +7,4 @@ def test_h():
     print(q.op.x())
     print(q.op.z())
     assert q.op.is_unitary(q.op.h())
-    assert q.is_close(q.op.h(), (q.op.x() + q.op.z()) / np.sqrt(2))
+    assert q.op.is_close(q.op.h(), (q.op.x() + q.op.z()) / np.sqrt(2))
