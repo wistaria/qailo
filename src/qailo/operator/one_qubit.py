@@ -21,7 +21,6 @@ def rz(p):
     return np.array([[np.exp(-1j * p / 2), 0], [0, np.exp(1j * p / 2)]])
 
 
-
 def s():
     return np.array([[1, 0], [0, 1j]])
 
@@ -32,7 +31,6 @@ def t():
 
 def x():
     return np.array([[0, 1], [1, 0]])
-
 
 
 def y():
