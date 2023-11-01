@@ -2,6 +2,7 @@ import numpy as np
 
 from ..operator import type as op
 from ..operator.swap import swap
+from .svd import svd_left, svd_right, svd_two
 
 
 class MPS:
@@ -9,14 +10,14 @@ class MPS:
     MPS representation of quantum pure state
 
     shape of tensors: [du, dp, dl]
-        du: dimension of upper leg (1 for top tensor)
+        du: dimension of left leg (1 for left-edge tensor)
         dp: dimension of physical leg (typically 2)
-        dl: dimension of lower leg (1 for bottom tensor)
+        dl: dimension of right leg (1 for right-edge tensor)
 
     canonical position: cp in range(n)
         0 <= cp(0) <= cp(1) < n
-        tensors [0...cp(0)-1]: top canonical
-        tensors [cp(1)+1...n-1]: bottom canonical
+        tensors [0...cp(0)-1]: left canonical
+        tensors [cp(1)+1...n-1]: right canonical
     """
 
     def __init__(self, tensors, q2t=None, t2q=None, cp=None, normalize=False):
@@ -53,26 +54,16 @@ class MPS:
         assert 0 <= p and p < n
         if self.cp[0] < p:
             for t in range(self.cp[0], p):
-                dims = list(self.tensors[t].shape)
-                A = self.tensors[t].reshape((dims[0] * dims[1], dims[2]))
-                U, S, Vh = np.linalg.svd(A, full_matrices=False)
-                dims[2] = S.shape[0]
-                self.tensors[t] = U.reshape(dims)
-                self.tensors[t + 1] = np.einsum(
-                    "i,ij,jkl->ikl", S, Vh, self.tensors[t + 1]
-                )
+                L, R = svd_left(self.tensors[t])
+                self.tensors[t] = L
+                self.tensors[t + 1] = np.einsum("il,ljk->ijk", R, self.tensors[t + 1])
         self.cp[0] = p
         self.cp[1] = max(p, self.cp[1])
         if self.cp[1] > p:
             for t in range(self.cp[1], p, -1):
-                dims = list(self.tensors[t].shape)
-                A = self.tensors[t].reshape((dims[0], dims[1] * dims[2]))
-                U, S, Vh = np.linalg.svd(A, full_matrices=False)
-                dims[0] = S.shape[0]
-                self.tensors[t] = Vh.reshape(dims)
-                self.tensors[t - 1] = np.einsum(
-                    "ijk,kl,l->ijl", self.tensors[t - 1], U, S
-                )
+                L, R = svd_right(self.tensors[t])
+                self.tensors[t - 1] = np.einsum("ijl,lk->ijk", self.tensors[t - 1], L)
+                self.tensors[t] = R
         self.cp[1] = p
 
     def _apply_one(self, p, s):
@@ -89,21 +80,14 @@ class MPS:
         self.canonicalize(s + 1)
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
-        dim0 = t0.shape[0]
-        dim1 = t1.shape[2]
         if not reverse:
             t = np.einsum("abc,cde,fgbd->afge", t0, t1, p)
-            p0, p1 = p.shape[0], p.shape[1]
         else:
             t = np.einsum("abc,cde,fgdb->agfe", t0, t1, p)
-            p0, p1 = p.shape[1], p.shape[0]
-        t = t.reshape((dim0 * p0, p1 * dim1))
-        U, S, Vh = np.linalg.svd(t, full_matrices=False)
-        d = S.shape[0] if maxdim is None else min(S.shape[0], maxdim)
-        self.tensors[s] = U[:, :d].reshape(dim0, p0, d)
-        self.tensors[s + 1] = np.einsum(
-            "i,ijk->ijk", S[:d], Vh[:d, :].reshape(d, p1, dim1)
-        )
+        L, R = svd_two(t, nkeep=maxdim, canonical="left")
+        # print("apply:", self.tensors[s].shape,self.tensors[s + 1].shape, L.shape, R.shape)
+        self.tensors[s] = L
+        self.tensors[s + 1] = R
 
     def _swap_tensors(self, s, maxdim=None):
         """
@@ -131,6 +115,7 @@ class MPS:
             self._apply_one(p, self.q2t[qpos[0]])
         elif op.num_qubits(p) == 2:
             tpos = [self.q2t[qpos[0]], self.q2t[qpos[1]]]
+            assert tpos[0] != tpos[1]
             if tpos[0] < tpos[1]:
                 self._move_qubit(qpos[1], tpos[0] + 1)
                 self._apply_two(p, tpos[0], maxdim=maxdim)
@@ -148,11 +133,17 @@ def check(mps):
     n = mps.num_qubits()
 
     # tensor shape
+    dims = []
     assert mps.tensors[0].shape[0] == 1
+    dims.append(mps.tensors[0].shape[0])
     for t in range(1, n - 1):
+        dims.append(mps.tensors[t].shape[0])
         assert mps.tensors[t].shape[0] == mps.tensors[t - 1].shape[2]
         assert mps.tensors[t].shape[2] == mps.tensors[t + 1].shape[0]
     assert mps.tensors[n - 1].shape[2] == 1
+    dims.append(mps.tensors[n - 1].shape[0])
+    dims.append(mps.tensors[n - 1].shape[2])
+    # print(dims)
 
     # qubit <-> tensor mapping
     for q in range(n):

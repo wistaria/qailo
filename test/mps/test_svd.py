@@ -2,18 +2,18 @@ import numpy as np
 import qailo as q
 
 
-def test_svd():
+def test_compact_svd():
     maxn = 64
     nt = 64
     for _ in range(nt):
         m, n, d = np.random.randint(2, maxn, size=(3,))
         A = np.random.random((m, n))
-        S, U, V = q.mps.svd(A)
+        S, U, V = q.mps.compact_svd(A)
         assert np.allclose(A, np.einsum("k,ik,jk->ij", S, U, V))
         for c in "center", "left", "right":
-            L, R = q.mps.svd(A, canonical=c)
+            L, R = q.mps.compact_svd(A, canonical=c)
             assert np.allclose(A, np.einsum("ik,jk->ij", L, R))
-        S, U, V = q.mps.svd(A, nkeep=d)
+        S, U, V = q.mps.compact_svd(A, nkeep=d)
         assert S.shape[0] == U.shape[1]
         assert S.shape[0] == V.shape[1]
         assert U.shape[0] == m
