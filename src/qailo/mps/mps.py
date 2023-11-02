@@ -23,25 +23,19 @@ class MPS:
     def __init__(self, tensors, q2t=None, t2q=None, cp=None):
         self.tensors = tensors
         n = len(self.tensors)
-        self.q2t = [p for p in range(n)] if q2t is None else q2t
+        self.q2t = list(range(n)) if q2t is None else q2t
         if t2q is not None:
             self.t2q = t2q
         else:
-            self.t2q = [0 for _ in range(n)]
+            self.t2q = [0] * n
             for p in range(n):
                 self.t2q[self.q2t[p]] = p
         assert len(self.q2t) == n and len(self.t2q) == n
-        self.cp = [0, n - 1] if cp is None else cp
+        self.cp = cp if cp is not None else [0, n - 1]
+        assert 0 <= self.cp[0] and self.cp[0] <= self.cp[1] and self.cp[1] < n
 
     def num_qubits(self):
         return len(self.tensors)
-
-    def norm(self):
-        A = np.identity(2)
-        for t in range(self.num_qubits()):
-            A = np.einsum("ij,jkl->ikl", A, self.tensors[t])
-            A = np.einsum("ijk,ijl->kl", A, self.tensors[t].conj())
-        return np.sqrt(np.trace(A))
 
     def canonicalize(self, p0, p1=None):
         p1 = p0 if p1 is None else p1
@@ -162,5 +156,9 @@ def product_state(n, c=0):
     return MPS(tensors)
 
 
-def norm(mps):
-    return mps.norm()
+def norm(m):
+    A = np.identity(2)
+    for t in range(m.num_qubits()):
+        A = np.einsum("ij,jkl->ikl", A, m.tensors[t])
+        A = np.einsum("ijk,ijl->kl", A, m.tensors[t].conj())
+    return np.sqrt(np.trace(A))
