@@ -1,3 +1,7 @@
+[![Actions status](https://github.com/wistaria/qailo/actions/workflows/pytest.yml/badge.svg)]
+(https://github.com/wistaria/qailo/actions)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # Qailo - 回路: Simple Quantum Circuit Simulator
 
 ### Design Policy
