@@ -1,6 +1,9 @@
-[![Actions status](https://github.com/wistaria/qailo/actions/workflows/pytest.yml/badge.svg)]
-(https://github.com/wistaria/qailo/actions)
+[![Actions status](https://github.com/wistaria/qailo/actions/workflows/pytest.yml/badge.svg)](https://github.com/wistaria/qailo/actions)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python 3.8](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
 
 # Qailo - 回路: Simple Quantum Circuit Simulator
 

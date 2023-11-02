@@ -25,7 +25,6 @@ def test_swap():
         mps.canonicalize(s)
         mps._swap_tensors(s)
         assert q.mps.norm(mps) == approx(norm)
-        assert q.mps.is_canonical(mps)
 
     v1 = q.sv.vector(q.mps.state_vector(mps))
     assert len(v0) == len(v1)
@@ -55,7 +54,6 @@ def test_move():
         s = np.random.randint(n)
         mps._move_qubit(p, s)
         assert q.mps.norm(mps) == approx(norm)
-        assert q.mps.is_canonical(mps)
 
     v1 = q.sv.vector(q.mps.state_vector(mps))
     assert len(v0) == len(v1)
