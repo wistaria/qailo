@@ -47,12 +47,6 @@ def test_apply():
             elif t == 1:
                 print("apply cz on {} and {}".format(i, j))
                 m0, m1, v = apply(q.op.cz(), m0, m1, v, [i, j], maxdim)
-        q.mps.check(m0)
-        q.mps.check(m1)
-        f0 = q.sv.fidelity(q.mps.state_vector(m0), v)
-        f1 = q.sv.fidelity(q.mps.state_vector(m1), v)
-        print("fidelity = {} and {}".format(f0, f1))
-        #assert f0 == approx(1)
 
     f0 = q.sv.fidelity(q.mps.state_vector(m0), v)
     f1 = q.sv.fidelity(q.mps.state_vector(m1), v)

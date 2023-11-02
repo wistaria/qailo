@@ -30,7 +30,7 @@ def svd_left(T, nkeep=None, tol=1e-12):
     L, R = compact_svd(A, nkeep, "left", tol)
     assert L.shape[0] == dims[0] * dims[1]
     L = L.reshape((dims[0], dims[1], L.shape[1]))
-    R = R.T
+    R = R.conj().T
     return L, R
 
 
@@ -40,7 +40,7 @@ def svd_right(T, nkeep=None, tol=1e-12):
     A = T.reshape((dims[0], dims[1] * dims[2]))
     L, R = compact_svd(A, nkeep, "right", tol)
     assert R.shape[0] == dims[1] * dims[2]
-    R = R.T.reshape((R.shape[1], dims[1], dims[2]))
+    R = R.conj().T.reshape((R.shape[1], dims[1], dims[2]))
     return L, R
 
 
@@ -51,5 +51,5 @@ def svd_two(T, nkeep=None, canonical="center", tol=1e-12):
     L, R = compact_svd(A, nkeep, canonical, tol)
     assert L.shape[0] == dims[0] * dims[1] and R.shape[0] == dims[2] * dims[3]
     L = L.reshape((dims[0], dims[1], L.shape[1]))
-    R = R.T.reshape((R.shape[1], dims[2], dims[3]))
+    R = R.conj().T.reshape((R.shape[1], dims[2], dims[3]))
     return L, R

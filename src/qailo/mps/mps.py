@@ -85,7 +85,6 @@ class MPS:
         else:
             t = np.einsum("abc,cde,fgdb->agfe", t0, t1, p)
         L, R = svd_two(t, nkeep=maxdim, canonical="left")
-        # print("apply:", self.tensors[s].shape,self.tensors[s + 1].shape, L.shape, R.shape)
         self.tensors[s] = L
         self.tensors[s + 1] = R
 

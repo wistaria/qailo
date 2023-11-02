@@ -108,7 +108,7 @@ def test_svd_two():
 
 
 if __name__ == "__main__":
-    test_svd()
+    test_compact_svd()
     test_svd_left()
     test_svd_right()
     test_svd_two()
