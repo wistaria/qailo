@@ -14,14 +14,20 @@ def test_canonical():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    mps = q.mps.MPS(tensors, normalize=True)
+    mps = q.mps.MPS(tensors)
+    norm = q.mps.norm(mps)
     assert q.mps.check(mps)
-    assert q.mps.norm(mps) == approx(1)
 
-    for _ in range(16):
+    for _ in range(n):
         p = np.random.randint(n)
         mps.canonicalize(p)
-        assert q.mps.norm(mps) == approx(1)
+        assert q.mps.norm(mps) == approx(norm)
+        assert q.mps.is_canonical(mps)
+
+    for _ in range(n):
+        p = np.random.randint(n - 1)
+        mps.canonicalize(p, p + 1)
+        assert q.mps.norm(mps) == approx(norm)
         assert q.mps.is_canonical(mps)
 
 

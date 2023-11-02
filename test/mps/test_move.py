@@ -14,8 +14,9 @@ def test_swap():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    mps = q.mps.MPS(tensors, normalize=True)
+    mps = q.mps.MPS(tensors)
     q.mps.check(mps)
+    norm = q.mps.norm(mps)
     v0 = q.sv.vector(q.mps.state_vector(mps))
 
     for _ in range(64):
@@ -23,7 +24,7 @@ def test_swap():
         print(f"swap tensors at {s} and {s+1}")
         mps.canonicalize(s)
         mps._swap_tensors(s)
-        assert q.mps.norm(mps) == approx(1)
+        assert q.mps.norm(mps) == approx(norm)
         assert q.mps.is_canonical(mps)
 
     v1 = q.sv.vector(q.mps.state_vector(mps))
@@ -44,15 +45,16 @@ def test_move():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    mps = q.mps.MPS(tensors, normalize=True)
+    mps = q.mps.MPS(tensors)
     q.mps.check(mps)
+    norm = q.mps.norm(mps)
     v0 = q.sv.vector(q.mps.state_vector(mps))
 
     for _ in range(16):
         p = np.random.randint(n)
         s = np.random.randint(n)
         mps._move_qubit(p, s)
-        assert q.mps.norm(mps) == approx(1)
+        assert q.mps.norm(mps) == approx(norm)
         assert q.mps.is_canonical(mps)
 
     v1 = q.sv.vector(q.mps.state_vector(mps))

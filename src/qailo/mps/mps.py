@@ -20,7 +20,7 @@ class MPS:
         tensors [cp(1)+1...n-1]: right canonical
     """
 
-    def __init__(self, tensors, q2t=None, t2q=None, cp=None, normalize=False):
+    def __init__(self, tensors, q2t=None, t2q=None, cp=None):
         self.tensors = tensors
         n = len(self.tensors)
         self.q2t = [p for p in range(n)] if q2t is None else q2t
@@ -32,8 +32,6 @@ class MPS:
                 self.t2q[self.q2t[p]] = p
         assert len(self.q2t) == n and len(self.t2q) == n
         self.cp = [0, n - 1] if cp is None else cp
-        if normalize:
-            self.normalize()
 
     def num_qubits(self):
         return len(self.tensors)
@@ -45,26 +43,23 @@ class MPS:
             A = np.einsum("ijk,ijl->kl", A, self.tensors[t].conj())
         return np.sqrt(np.trace(A))
 
-    def normalize(self):
-        self.canonicalize(0)
-        self.tensors[0] /= self.norm()
-
-    def canonicalize(self, p):
+    def canonicalize(self, p0, p1=None):
+        p1 = p0 if p1 is None else p1
         n = len(self.tensors)
-        assert 0 <= p and p < n
-        if self.cp[0] < p:
-            for t in range(self.cp[0], p):
+        assert 0 <= p0 and p0 <= p1 and p1 < n
+        if self.cp[0] < p0:
+            for t in range(self.cp[0], p0):
                 L, R = tensor_svd(self.tensors[t], [[0, 1], [2]], "left")
                 self.tensors[t] = L
                 self.tensors[t + 1] = np.einsum("il,ljk->ijk", R, self.tensors[t + 1])
-        self.cp[0] = p
-        self.cp[1] = max(p, self.cp[1])
-        if self.cp[1] > p:
-            for t in range(self.cp[1], p, -1):
+        self.cp[0] = p0
+        self.cp[1] = max(p0, self.cp[1])
+        if self.cp[1] > p1:
+            for t in range(self.cp[1], p1, -1):
                 L, R = tensor_svd(self.tensors[t], [[0], [1, 2]], "right")
                 self.tensors[t - 1] = np.einsum("ijl,lk->ijk", self.tensors[t - 1], L)
                 self.tensors[t] = R
-        self.cp[1] = p
+        self.cp[1] = p1
 
     def _apply_one(self, p, s):
         assert op.num_qubits(p) == 1
@@ -77,14 +72,14 @@ class MPS:
         apply 2-qubit operator on neighboring tensors, s and s+1
         """
         assert op.num_qubits(p) == 2
-        self.canonicalize(s + 1)
+        self.canonicalize(s, s + 1)
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
         if not reverse:
             t = np.einsum("abc,cde,fgbd->afge", t0, t1, p)
         else:
             t = np.einsum("abc,cde,fgdb->agfe", t0, t1, p)
-        L, R = tensor_svd(t, [[0, 1], [2, 3]], "left", maxdim)
+        L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=maxdim)
         self.tensors[s] = L
         self.tensors[s + 1] = R
 
