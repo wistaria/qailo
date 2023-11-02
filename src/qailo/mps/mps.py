@@ -2,7 +2,7 @@ import numpy as np
 
 from ..operator import type as op
 from ..operator.swap import swap
-from .svd import svd_left, svd_right, svd_two
+from .svd import tensor_svd
 
 
 class MPS:
@@ -54,14 +54,14 @@ class MPS:
         assert 0 <= p and p < n
         if self.cp[0] < p:
             for t in range(self.cp[0], p):
-                L, R = svd_left(self.tensors[t])
+                L, R = tensor_svd(self.tensors[t], [[0, 1], [2]], "left")
                 self.tensors[t] = L
                 self.tensors[t + 1] = np.einsum("il,ljk->ijk", R, self.tensors[t + 1])
         self.cp[0] = p
         self.cp[1] = max(p, self.cp[1])
         if self.cp[1] > p:
             for t in range(self.cp[1], p, -1):
-                L, R = svd_right(self.tensors[t])
+                L, R = tensor_svd(self.tensors[t], [[0], [1, 2]], "right")
                 self.tensors[t - 1] = np.einsum("ijl,lk->ijk", self.tensors[t - 1], L)
                 self.tensors[t] = R
         self.cp[1] = p
@@ -84,7 +84,7 @@ class MPS:
             t = np.einsum("abc,cde,fgbd->afge", t0, t1, p)
         else:
             t = np.einsum("abc,cde,fgdb->agfe", t0, t1, p)
-        L, R = svd_two(t, nkeep=maxdim, canonical="left")
+        L, R = tensor_svd(t, [[0, 1], [2, 3]], "left", maxdim)
         self.tensors[s] = L
         self.tensors[s + 1] = R
 

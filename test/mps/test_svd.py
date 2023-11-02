@@ -10,9 +10,6 @@ def test_compact_svd():
         A = np.random.random((m, n))
         S, U, V = q.mps.compact_svd(A)
         assert np.allclose(A, np.einsum("k,ik,jk->ij", S, U, V))
-        for c in "center", "left", "right":
-            L, R = q.mps.compact_svd(A, canonical=c)
-            assert np.allclose(A, np.einsum("ik,jk->ij", L, R))
         S, U, V = q.mps.compact_svd(A, nkeep=d)
         assert S.shape[0] == U.shape[1]
         assert S.shape[0] == V.shape[1]
@@ -30,7 +27,7 @@ def test_svd_left():
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p))
-        L, R = q.mps.svd_left(T)
+        L, R = q.mps.tensor_svd(T, [[0, 1], [2]], "left")
         assert len(L.shape) == 3
         assert len(R.shape) == 2
         assert L.shape[0] == m
@@ -38,7 +35,7 @@ def test_svd_left():
         assert L.shape[2] == R.shape[0]
         assert R.shape[1] == p
         assert np.allclose(T, np.einsum("ijl,lk->ijk", L, R))
-        L, R = q.mps.svd_left(T, nkeep=d)
+        L, R = q.mps.tensor_svd(T, [[0, 1], [2]], "left", nkeep=d)
         assert len(L.shape) == 3
         assert len(R.shape) == 2
         assert L.shape[0] == m
@@ -57,7 +54,7 @@ def test_svd_right():
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p))
-        L, R = q.mps.svd_right(T)
+        L, R = q.mps.tensor_svd(T, [[0], [1, 2]], "right")
         assert len(L.shape) == 2
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -65,7 +62,7 @@ def test_svd_right():
         assert R.shape[1] == n
         assert R.shape[2] == p
         assert np.allclose(T, np.einsum("il,ljk->ijk", L, R))
-        L, R = q.mps.svd_right(T, nkeep=d)
+        L, R = q.mps.tensor_svd(T, [[0], [1, 2]], "right", nkeep=d)
         assert len(L.shape) == 2
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -84,7 +81,7 @@ def test_svd_two():
     for _ in range(nt):
         m, n, p, r, d = np.random.randint(2, maxn, size=(5,))
         T = np.random.random((m, n, p, r))
-        L, R = q.mps.svd_two(T)
+        L, R = q.mps.tensor_svd(T, [[0, 1], [2, 3]])
         assert len(L.shape) == 3
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -93,7 +90,7 @@ def test_svd_two():
         assert R.shape[1] == p
         assert R.shape[2] == r
         assert np.allclose(T, np.einsum("ijm,mkl->ijkl", L, R))
-        L, R = q.mps.svd_two(T, nkeep=d)
+        L, R = q.mps.tensor_svd(T, [[0, 1], [2, 3]], nkeep=d)
         assert len(L.shape) == 3
         assert len(R.shape) == 3
         assert L.shape[0] == m
