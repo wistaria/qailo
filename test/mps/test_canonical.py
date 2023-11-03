@@ -16,7 +16,7 @@ def test_canonical():
     tensors.append(np.random.random((d, 2, 1)))
     mps = q.mps.MPS(tensors)
     norm = q.mps.norm(mps)
-    assert q.mps.check_mps(mps)
+    assert q.mps.is_canonical(mps)
 
     for _ in range(n):
         p = np.random.randint(n)

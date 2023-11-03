@@ -1,6 +1,7 @@
 import numpy as np
 import qailo as q
 from pytest import approx
+from qailo.mps.apply import _move_qubit, _swap_tensors
 
 
 def test_swap():
@@ -14,19 +15,19 @@ def test_swap():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    mps = q.mps.MPS(tensors)
-    q.mps.check_mps(mps)
-    norm = q.mps.norm(mps)
-    v0 = q.sv.vector(q.mps.state_vector(mps))
+    m = q.mps.MPS(tensors)
+    q.mps.is_canonical(m)
+    norm = q.mps.norm(m)
+    v0 = q.sv.vector(q.mps.state_vector(m))
 
     for _ in range(64):
         s = np.random.randint(n - 1)
         print(f"swap tensors at {s} and {s+1}")
-        mps.canonicalize(s)
-        mps._swap_tensors(s)
-        assert q.mps.norm(mps) == approx(norm)
+        m.canonicalize(s)
+        _swap_tensors(m, s)
+        assert q.mps.norm(m) == approx(norm)
 
-    v1 = q.sv.vector(q.mps.state_vector(mps))
+    v1 = q.sv.vector(q.mps.state_vector(m))
     assert len(v0) == len(v1)
     print(v0)
     print(v1)
@@ -44,18 +45,18 @@ def test_move():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    mps = q.mps.MPS(tensors)
-    q.mps.check_mps(mps)
-    norm = q.mps.norm(mps)
-    v0 = q.sv.vector(q.mps.state_vector(mps))
+    m = q.mps.MPS(tensors)
+    q.mps.is_canonical(m)
+    norm = q.mps.norm(m)
+    v0 = q.sv.vector(q.mps.state_vector(m))
 
     for _ in range(16):
         p = np.random.randint(n)
         s = np.random.randint(n)
-        mps._move_qubit(p, s)
-        assert q.mps.norm(mps) == approx(norm)
+        _move_qubit(m, p, s)
+        assert q.mps.norm(m) == approx(norm)
 
-    v1 = q.sv.vector(q.mps.state_vector(mps))
+    v1 = q.sv.vector(q.mps.state_vector(m))
     assert len(v0) == len(v1)
     print(v0)
     print(v1)

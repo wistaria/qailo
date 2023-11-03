@@ -1,5 +1,6 @@
-from .mps import MPS
+def is_canonical(m):
+    return m.is_canonical()
 
 
 def is_mps(m):
-    return isinstance(m, MPS)
+    return hasattr(m, "tensors")

@@ -1,8 +1,6 @@
 import numpy as np
 
 from ..operator import type as op
-from ..operator.swap import swap
-from .num_qubits import num_qubits
 from .svd import tensor_svd
 
 
@@ -53,6 +51,37 @@ class MPS:
                 self.tensors[t] = R
         self.cp[1] = p1
 
+    def is_canonical(self):
+        # tensor shape
+        n = len(self.tensors)
+        dims = []
+        assert self.tensors[0].shape[0] == 1
+        dims.append(self.tensors[0].shape[0])
+        for t in range(1, n - 1):
+            dims.append(self.tensors[t].shape[0])
+            assert self.tensors[t].shape[0] == self.tensors[t - 1].shape[2]
+            assert self.tensors[t].shape[2] == self.tensors[t + 1].shape[0]
+        assert self.tensors[n - 1].shape[2] == 1
+        dims.append(self.tensors[n - 1].shape[0])
+        dims.append(self.tensors[n - 1].shape[2])
+
+        # qubit <-> tensor mapping
+        for q in range(n):
+            assert self.t2q[self.q2t[q]] == q
+        for t in range(n):
+            assert self.q2t[self.t2q[t]] == t
+
+        # canonicality
+        assert self.cp[0] in range(n)
+        assert self.cp[1] in range(n)
+        for t in range(0, self.cp[0]):
+            A = np.einsum("ijk,ijl->kl", self.tensors[t], self.tensors[t].conj())
+            assert np.allclose(A, np.identity(A.shape[0]))
+        for t in range(self.cp[1] + 1, n):
+            A = np.einsum("ijk,ljk->il", self.tensors[t], self.tensors[t].conj())
+            assert np.allclose(A, np.identity(A.shape[0]))
+        return True
+
     def _apply_one(self, p, s):
         assert op.num_qubits(p) == 1
         self.tensors[s] = np.einsum("abc,db->adc", self.tensors[s], p)
@@ -74,71 +103,3 @@ class MPS:
         L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=maxdim)
         self.tensors[s] = L
         self.tensors[s + 1] = R
-
-    def _swap_tensors(self, s, maxdim=None):
-        """
-        swap neighboring two tensors at s and s+1
-        """
-        assert s in range(0, num_qubits(self) - 1)
-        self._apply_two(swap(), s, maxdim=maxdim)
-        p0, p1 = self.t2q[s], self.t2q[s + 1]
-        self.q2t[p0], self.q2t[p1] = s + 1, s
-        self.t2q[s], self.t2q[s + 1] = p1, p0
-
-    def _move_qubit(self, p, s, maxdim=None):
-        if self.q2t[p] != s:
-            # print(f"moving qubit {p} at {self.q2t[p]} to {s}")
-            for u in range(self.q2t[p], s):
-                # print(f"swap tensors {u} and {u+1}")
-                self._swap_tensors(u, maxdim=maxdim)
-            for u in range(self.q2t[p], s, -1):
-                # print(f"swap tensors {u-1} and {u}")
-                self._swap_tensors(u - 1, maxdim=maxdim)
-
-    def apply(self, p, qpos, maxdim=None):
-        assert op.is_operator(p) and len(qpos) == op.num_qubits(p)
-        if op.num_qubits(p) == 1:
-            self._apply_one(p, self.q2t[qpos[0]])
-        elif op.num_qubits(p) == 2:
-            tpos = [self.q2t[qpos[0]], self.q2t[qpos[1]]]
-            assert tpos[0] != tpos[1]
-            if tpos[0] < tpos[1]:
-                self._move_qubit(qpos[1], tpos[0] + 1)
-                self._apply_two(p, tpos[0], maxdim=maxdim)
-            else:
-                self._move_qubit(qpos[0], tpos[1] + 1)
-                self._apply_two(p, tpos[1], maxdim=maxdim, reverse=True)
-        else:
-            raise ValueError
-
-
-def check(mps):
-    """
-    Check the shape of mps
-    """
-    n = num_qubits(mps)
-
-    # tensor shape
-    dims = []
-    assert mps.tensors[0].shape[0] == 1
-    dims.append(mps.tensors[0].shape[0])
-    for t in range(1, n - 1):
-        dims.append(mps.tensors[t].shape[0])
-        assert mps.tensors[t].shape[0] == mps.tensors[t - 1].shape[2]
-        assert mps.tensors[t].shape[2] == mps.tensors[t + 1].shape[0]
-    assert mps.tensors[n - 1].shape[2] == 1
-    dims.append(mps.tensors[n - 1].shape[0])
-    dims.append(mps.tensors[n - 1].shape[2])
-    # print(dims)
-
-    # qubit <-> tensor mapping
-    for q in range(n):
-        assert mps.t2q[mps.q2t[q]] == q
-    for t in range(n):
-        assert mps.q2t[mps.t2q[t]] == t
-
-    # canonical position
-    assert mps.cp[0] in range(n)
-    assert mps.cp[1] in range(n)
-
-    return True

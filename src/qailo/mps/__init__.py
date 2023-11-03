@@ -1,20 +1,21 @@
-from .canonical import check_mps, is_canonical
+from .apply import apply
 from .mps import MPS
 from .norm import norm
 from .num_qubits import num_qubits
 from .product_state import product_state
 from .state_vector import state_vector
 from .svd import compact_svd, tensor_svd
+from .type import is_canonical, is_mps
 
 __all__ = [
-    is_canonical,
-    check_mps,
+    apply,
     MPS,
     norm,
-    norm,
     num_qubits,
-    compact_svd,
-    tensor_svd,
     product_state,
     state_vector,
+    compact_svd,
+    tensor_svd,
+    is_canonical,
+    is_mps,
 ]

@@ -5,7 +5,7 @@ import qailo as q
 def test_mps():
     n = 4
     c = q.util.str2binary("1100")
-    mps = q.mps.product_state(n, c)
+    mps = q.mps.MPS(q.mps.product_state(n, c))
     print(n, c, mps)
     sv = q.mps.state_vector(mps)
     print(sv)

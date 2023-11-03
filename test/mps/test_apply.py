@@ -5,8 +5,8 @@ from pytest import approx
 
 
 def apply(op, m0, m1, v, pos, maxdim=None):
-    m0.apply(op, pos)
-    m1.apply(op, pos, maxdim)
+    m0 = q.mps.apply(m0, op, pos)
+    m1 = q.mps.apply(m1, op, pos, maxdim)
     v = q.sv.apply(op, v, pos)
     return m0, m1, v
 
@@ -16,8 +16,8 @@ def test_apply():
     p = 64
     maxdim = 2
 
-    m0 = q.mps.product_state(n)
-    m1 = q.mps.product_state(n)
+    m0 = q.mps.MPS(q.mps.product_state(n))
+    m1 = q.mps.MPS(q.mps.product_state(n))
     v = q.sv.state_vector(n)
 
     i = 4
