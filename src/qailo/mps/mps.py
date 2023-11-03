@@ -2,6 +2,7 @@ import numpy as np
 
 from ..operator import type as op
 from ..operator.swap import swap
+from .num_qubits import num_qubits
 from .svd import tensor_svd
 
 
@@ -33,9 +34,6 @@ class MPS:
         assert len(self.q2t) == n and len(self.t2q) == n
         self.cp = cp if cp is not None else [0, n - 1]
         assert 0 <= self.cp[0] and self.cp[0] <= self.cp[1] and self.cp[1] < n
-
-    def num_qubits(self):
-        return len(self.tensors)
 
     def canonicalize(self, p0, p1=None):
         p1 = p0 if p1 is None else p1
@@ -81,7 +79,7 @@ class MPS:
         """
         swap neighboring two tensors at s and s+1
         """
-        assert s in range(0, self.num_qubits() - 1)
+        assert s in range(0, num_qubits(self) - 1)
         self._apply_two(swap(), s, maxdim=maxdim)
         p0, p1 = self.t2q[s], self.t2q[s + 1]
         self.q2t[p0], self.q2t[p1] = s + 1, s
@@ -118,7 +116,7 @@ def check(mps):
     """
     Check the shape of mps
     """
-    n = mps.num_qubits()
+    n = num_qubits(mps)
 
     # tensor shape
     dims = []
@@ -144,21 +142,3 @@ def check(mps):
     assert mps.cp[1] in range(n)
 
     return True
-
-
-def product_state(n, c=0):
-    assert n > 0
-    tensors = []
-    for t in range(n):
-        tensor = np.zeros((1, 2, 1))
-        tensor[0, (c >> (n - t - 1)) & 1, 0] = 1
-        tensors.append(tensor)
-    return MPS(tensors)
-
-
-def norm(m):
-    A = np.identity(2)
-    for t in range(m.num_qubits()):
-        A = np.einsum("ij,jkl->ikl", A, m.tensors[t])
-        A = np.einsum("ijk,ijl->kl", A, m.tensors[t].conj())
-    return np.sqrt(np.trace(A))

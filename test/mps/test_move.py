@@ -15,7 +15,7 @@ def test_swap():
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
     mps = q.mps.MPS(tensors)
-    q.mps.check(mps)
+    q.mps.check_mps(mps)
     norm = q.mps.norm(mps)
     v0 = q.sv.vector(q.mps.state_vector(mps))
 
@@ -45,7 +45,7 @@ def test_move():
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
     mps = q.mps.MPS(tensors)
-    q.mps.check(mps)
+    q.mps.check_mps(mps)
     norm = q.mps.norm(mps)
     v0 = q.sv.vector(q.mps.state_vector(mps))
 

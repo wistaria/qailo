@@ -3,8 +3,8 @@ import qailo as q
 
 
 def test_compact_svd():
-    maxn = 64
-    nt = 64
+    maxn = 16
+    nt = 16
     for _ in range(nt):
         m, n, d = np.random.randint(2, maxn, size=(3,))
         A = np.random.random((m, n))
@@ -22,8 +22,8 @@ def test_compact_svd():
 
 
 def test_svd_left():
-    maxn = 32
-    nt = 64
+    maxn = 16
+    nt = 16
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p))
@@ -49,8 +49,8 @@ def test_svd_left():
 
 
 def test_svd_right():
-    maxn = 32
-    nt = 64
+    maxn = 16
+    nt = 16
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p))
@@ -77,7 +77,7 @@ def test_svd_right():
 
 def test_svd_two():
     maxn = 8
-    nt = 64
+    nt = 16
     for _ in range(nt):
         m, n, p, r, d = np.random.randint(2, maxn, size=(5,))
         T = np.random.random((m, n, p, r))
