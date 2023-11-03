@@ -1,7 +1,6 @@
 import numpy as np
 
 from ..operator import type as op
-from ..util.strops import letters, replace
 from . import type as sv
 
 
@@ -14,9 +13,10 @@ def apply(v, p, pos=None):
         pos = range(n)
     assert len(pos) == m
 
-    ss_op = letters()[: 2 * m]
-    ss_v = ss_to = letters()[2 * m : 2 * m + n + 1]
+    ss_v = list(range(2 * m, 2 * m + n + 1))
+    ss_op = list(range(2 * m))
+    ss_to = list(range(2 * m, 2 * m + n + 1))
     for i in range(m):
-        ss_v = replace(ss_v, pos[i], ss_op[m + i])
-        ss_to = replace(ss_to, pos[i], ss_op[i])
-    return np.einsum("{},{}->{}".format(ss_v, ss_op, ss_to), v, p)
+        ss_v[pos[i]] = ss_op[m + i]
+        ss_to[pos[i]] = ss_op[i]
+    return np.einsum(v, ss_v, p, ss_op, ss_to)

@@ -1,6 +1,5 @@
 import numpy as np
 
-from ..util.strops import letters, replace
 from .type import is_operator, num_qubits
 
 
@@ -16,9 +15,10 @@ def multiply(pin, p, pos=None):
     for i in pos:
         assert i < n
 
-    ss_opi = ss_to = letters()[: 2 * n]
-    ss_op = letters()[2 * n : 2 * n + 2 * m]
+    ss_pin = list(range(2 * n))
+    ss_p = list(range(2 * n, 2 * n + 2 * m))
+    ss_to = list(range(2 * n))
     for i in range(m):
-        ss_opi = replace(ss_opi, pos[i], ss_op[m + i])
-        ss_to = replace(ss_to, pos[i], ss_op[i])
-    return np.einsum("{},{}->{}".format(ss_opi, ss_op, ss_to), pin, p)
+        ss_pin[pos[i]] = ss_p[m + i]
+        ss_to[pos[i]] = ss_p[i]
+    return np.einsum(pin, ss_pin, p, ss_p, ss_to)

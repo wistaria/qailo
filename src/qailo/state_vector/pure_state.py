@@ -1,19 +1,13 @@
 import numpy as np
 
-from ..util.strops import letters
 from . import type as sv
 
 
 def pure_state(v):
     assert sv.is_state_vector(v)
     n = sv.num_qubits(v)
-    v = v / np.linalg.norm(v)
-    ss_from0 = letters()[: n + 1]
-    ss_from1 = letters()[n + 1 : 2 * n + 2]
-    ss_to = (
-        letters()[:n]
-        + letters()[n + 1 : 2 * n + 1]
-        + letters()[n]
-        + letters()[2 * n + 1]
-    )
-    return np.einsum("{},{}->{}".format(ss_from0, ss_from1, ss_to), v, v.conj())
+    w = (v / np.linalg.norm(v)).reshape((2,) * n)
+    ss0 = list(range(n))
+    ss1 = list(range(n, 2 * n))
+    shape = (2,) * (2 * n) + (1, 1)
+    return np.einsum(w, ss0, w.conj(), ss1).reshape(shape)

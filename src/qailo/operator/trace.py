@@ -1,6 +1,5 @@
 import numpy as np
 
-from ..util.strops import letters, replace
 from .type import is_density_matrix, is_operator, num_qubits
 
 
@@ -14,7 +13,7 @@ def trace(q, pos=None):
     for i in pos:
         assert i < n
 
-    ss = letters()[: 2 * n]
+    ss = list(range(2 * n))
     for i in pos:
-        ss = replace(ss, n + i, ss[i])
-    return np.einsum(ss, q)
+        ss[n + i] = ss[i]
+    return np.einsum(q, ss)
