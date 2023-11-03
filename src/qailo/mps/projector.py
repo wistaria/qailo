@@ -1,4 +1,5 @@
 import numpy as np
+
 from .svd import compact_svd
 
 
@@ -7,12 +8,12 @@ def normalize_s(s0, s1):
     ss1 = s1.copy()
     i = 0
     for k in range(len(s0)):
-        if not s0[k] in s1:
+        if s0[k] not in s1:
             ss0[k] = i
             i += 1
     print(s0, s1, ss0, ss1)
     for k in range(len(s1)):
-        if not s1[k] in s0:
+        if s1[k] not in s0:
             ss1[k] = i
             i += 1
     print(s0, s1, ss0, ss1)
@@ -33,12 +34,12 @@ def collect_legs(s0, s1):
     legs1L = []
     legs1R = []
     for k in range(len(s0)):
-        if not s0[k] in s1:
+        if s0[k] not in s1:
             legs0L.append(k)
         else:
             legs0R.append(k)
     for k in range(len(s1)):
-        if not s1[k] in s0:
+        if s1[k] not in s0:
             legs1R.append(k)
         else:
             legs1L.append(k)
