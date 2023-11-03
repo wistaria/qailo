@@ -23,9 +23,7 @@ class MPS:
         self.tensors = tensors
         n = len(self.tensors)
         self.q2t = list(range(n))
-        self.t2q = [0] * n
-        for p in range(n):
-            self.t2q[self.q2t[p]] = p
+        self.t2q = list(range(n))
         self.cp = [0, n - 1]
 
     def _canonicalize(self, p0, p1=None):
@@ -36,13 +34,17 @@ class MPS:
             for t in range(self.cp[0], p0):
                 L, R = tensor_svd(self.tensors[t], [[0, 1], [2]], "left")
                 self.tensors[t] = L
-                self.tensors[t + 1] = np.einsum("il,ljk->ijk", R, self.tensors[t + 1])
+                self.tensors[t + 1] = np.einsum(
+                    R, [0, 3], self.tensors[t + 1], [3, 1, 2]
+                )
         self.cp[0] = p0
         self.cp[1] = max(p0, self.cp[1])
         if self.cp[1] > p1:
             for t in range(self.cp[1], p1, -1):
                 L, R = tensor_svd(self.tensors[t], [[0], [1, 2]], "right")
-                self.tensors[t - 1] = np.einsum("ijl,lk->ijk", self.tensors[t - 1], L)
+                self.tensors[t - 1] = np.einsum(
+                    self.tensors[t - 1], [0, 1, 3], L, [3, 2]
+                )
                 self.tensors[t] = R
         self.cp[1] = p1
 
@@ -70,31 +72,36 @@ class MPS:
         assert self.cp[0] in range(n)
         assert self.cp[1] in range(n)
         for t in range(0, self.cp[0]):
-            A = np.einsum("ijk,ijl->kl", self.tensors[t], self.tensors[t].conj())
+            A = np.einsum(self.tensors[t], [2, 3, 1], self.tensors[t].conj(), [2, 3, 0])
+            # A = np.einsum("ijk,ijl->kl", self.tensors[t], self.tensors[t].conj())
             assert np.allclose(A, np.identity(A.shape[0]))
         for t in range(self.cp[1] + 1, n):
-            A = np.einsum("ijk,ljk->il", self.tensors[t], self.tensors[t].conj())
+            A = np.einsum(self.tensors[t], [1, 3, 2], self.tensors[t].conj(), [0, 3, 2])
             assert np.allclose(A, np.identity(A.shape[0]))
         return True
 
     def _apply_one(self, p, s):
+        """
+        apply 1-qubit operator on tensor at s
+        """
         assert op.num_qubits(p) == 1
-        self.tensors[s] = np.einsum("abc,db->adc", self.tensors[s], p)
+        self.tensors[s] = np.einsum(self.tensors[s], [0, 3, 2], p, [1, 3])
         self.cp[0] = min(self.cp[0], s)
         self.cp[1] = max(self.cp[1], s)
 
     def _apply_two(self, p, s, maxdim=None, reverse=False):
         """
-        apply 2-qubit operator on neighboring tensors, s and s+1
+        apply 2-qubit operator on neighboring tensors at s and s+1
         """
         assert op.num_qubits(p) == 2
         self._canonicalize(s, s + 1)
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
+        t = np.einsum(t0, [0, 1, 4], t1, [4, 2, 3])
         if not reverse:
-            t = np.einsum("abc,cde,fgbd->afge", t0, t1, p)
+            t = np.einsum(t, [0, 4, 5, 3], p, [1, 2, 4, 5])
         else:
-            t = np.einsum("abc,cde,fgdb->agfe", t0, t1, p)
+            t = np.einsum(t, [0, 4, 5, 3], p, [2, 1, 5, 4])
         L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=maxdim)
         self.tensors[s] = L
         self.tensors[s + 1] = R
