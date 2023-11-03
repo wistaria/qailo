@@ -1,30 +1,36 @@
+from copy import deepcopy
+
 import numpy as np
 
 from ..operator import type as op
+from .projector import projector
 from .svd import tensor_svd
 
 
-class MPS:
+class MPS_P:
     """
     MPS representation of quantum pure state
 
     shape of tensors: [du, dp, dl]
-        du: dimension of left leg (1 for left-edge tensor)
+        du: dimension of upper leg (1 for top tensor)
         dp: dimension of physical leg (typically 2)
-        dl: dimension of right leg (1 for right-edge tensor)
+        dl: dimension of lower leg (1 for bottom tensor)
 
     canonical position: cp in range(n)
         0 <= cp(0) <= cp(1) < n
-        tensors [0...cp(0)-1]: left canonical
-        tensors [cp(1)+1...n-1]: right canonical
+        tensors [0...cp(0)-1]: top canonical
+        tensors [cp(1)+1...n-1]: bottom canonical
     """
 
     def __init__(self, tensors):
-        self.tensors = tensors
+        self.tensors = deepcopy(tensors)
         n = len(self.tensors)
         self.q2t = list(range(n))
         self.t2q = list(range(n))
         self.cp = [0, n - 1]
+        # canonicalization matrices
+        # put sentinels (1x1 identities) at t = 0 and t = n
+        self.cmat = [np.identity(1)] + [None] * (n - 1) + [np.identity(1)]
 
     def _canonicalize(self, p0, p1=None):
         p1 = p0 if p1 is None else p1
@@ -32,20 +38,14 @@ class MPS:
         assert 0 <= p0 and p0 <= p1 and p1 < n
         if self.cp[0] < p0:
             for t in range(self.cp[0], p0):
-                L, R = tensor_svd(self.tensors[t], [[0, 1], [2]], "left")
-                self.tensors[t] = L
-                self.tensors[t + 1] = np.einsum(
-                    R, [0, 3], self.tensors[t + 1], [3, 1, 2]
-                )
+                A = np.einsum(self.cmat[t], [0, 3], self.tensors[t], [3, 1, 2])
+                _, self.cmat[t + 1] = tensor_svd(A, [[0, 1], [2]], "left")
         self.cp[0] = p0
         self.cp[1] = max(p0, self.cp[1])
         if self.cp[1] > p1:
             for t in range(self.cp[1], p1, -1):
-                L, R = tensor_svd(self.tensors[t], [[0], [1, 2]], "right")
-                self.tensors[t - 1] = np.einsum(
-                    self.tensors[t - 1], [0, 1, 3], L, [3, 2]
-                )
-                self.tensors[t] = R
+                A = np.einsum(self.tensors[t], [0, 1, 3], self.cmat[t + 1], [3, 2])
+                self.cmat[t], _ = tensor_svd(A, [[0], [1, 2]], "right")
         self.cp[1] = p1
 
     def _is_canonical(self):
@@ -71,18 +71,22 @@ class MPS:
         # canonicality
         assert self.cp[0] in range(n)
         assert self.cp[1] in range(n)
+        A = np.identity(1)
         for t in range(0, self.cp[0]):
-            A = np.einsum(self.tensors[t], [2, 3, 1], self.tensors[t].conj(), [2, 3, 0])
-            assert np.allclose(A, np.identity(A.shape[0]))
-        for t in range(self.cp[1] + 1, n):
-            A = np.einsum(self.tensors[t], [1, 3, 2], self.tensors[t].conj(), [0, 3, 2])
-            assert np.allclose(A, np.identity(A.shape[0]))
+            A = np.einsum(A, [0, 3], self.tensors[t], [3, 1, 2])
+            A = np.einsum(A, [2, 3, 1], self.tensors[t].conj(), [2, 3, 0])
+            B = np.einsum(self.cmat[t + 1], [2, 1], self.cmat[t + 1].conj(), [2, 0])
+            assert A.shape == B.shape
+            assert np.allclose(A, B)
+        A = np.identity(1)
+        for t in range(n - 1, self.cp[1], -1):
+            A = np.einsum(self.tensors[t], [0, 1, 3], A, [3, 2])
+            A = np.einsum(self.tensors[t].conj(), [1, 2, 3], A, [0, 2, 3])
+            B = np.einsum(self.cmat[t], [0, 2], self.cmat[t].conj(), [1, 2])
+            assert np.allclose(A, B)
         return True
 
     def _apply_one(self, p, s):
-        """
-        apply 1-qubit operator on tensor at s
-        """
         assert op.num_qubits(p) == 1
         self.tensors[s] = np.einsum(self.tensors[s], [0, 3, 2], p, [1, 3])
         self.cp[0] = min(self.cp[0], s)
@@ -90,17 +94,20 @@ class MPS:
 
     def _apply_two(self, p, s, maxdim=None, reverse=False):
         """
-        apply 2-qubit operator on neighboring tensors at s and s+1
+        apply 2-qubit operator on neighboring tensors, s and s+1
         """
-        assert op.num_qubits(p) == 2
         self._canonicalize(s, s + 1)
+        p0, p1 = tensor_svd(p, [[0, 2], [1, 3]])
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
-        t = np.einsum(t0, [0, 1, 4], t1, [4, 2, 3])
         if not reverse:
-            t = np.einsum(t, [0, 4, 5, 3], p, [1, 2, 4, 5])
+            t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
+            t1 = np.einsum(t1, [0, 4, 3], p1, [1, 2, 4])
         else:
-            t = np.einsum(t, [0, 4, 5, 3], p, [2, 1, 5, 4])
-        L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=maxdim)
-        self.tensors[s] = L
-        self.tensors[s + 1] = R
+            t0 = np.einsum(t0, [0, 4, 3], p1, [2, 1, 4])
+            t1 = np.einsum(t1, [0, 4, 3], p0, [2, 4, 1])
+        tt0 = np.einsum(self.cmat[s], [0, 4], t0, [4, 1, 2, 3])
+        tt1 = np.einsum(t1, [0, 1, 2, 4], self.cmat[s + 2], [4, 3])
+        WL, WR = projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], nkeep=maxdim)
+        self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
+        self.tensors[s + 1] = np.einsum(WL.conj(), [3, 4, 0], t1, [4, 3, 1, 2])

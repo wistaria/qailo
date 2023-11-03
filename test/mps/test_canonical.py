@@ -14,21 +14,56 @@ def test_canonical():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    mps = q.mps.MPS(tensors)
-    norm = q.mps.norm(mps)
-    assert q.mps.is_canonical(mps)
+    m0 = q.mps.MPS_C(tensors)
+    m1 = q.mps.MPS_P(tensors)
+    norm = q.mps.norm(m0)
+    assert q.mps.norm(m0) == approx(norm)
+    assert q.mps.norm(m1) == approx(norm)
+    assert q.mps.is_canonical(m0)
+    assert q.mps.is_canonical(m1)
 
     for _ in range(n):
         p = np.random.randint(n)
-        mps._canonicalize(p)
-        assert q.mps.norm(mps) == approx(norm)
-        assert q.mps.is_canonical(mps)
+        m0._canonicalize(p)
+        m1._canonicalize(p)
+        assert q.mps.norm(m0) == approx(norm)
+        assert q.mps.norm(m1) == approx(norm)
+        assert q.mps.is_canonical(m0)
+        assert q.mps.is_canonical(m1)
 
     for _ in range(n):
         p = np.random.randint(n - 1)
-        mps._canonicalize(p, p + 1)
-        assert q.mps.norm(mps) == approx(norm)
-        assert q.mps.is_canonical(mps)
+        m0._canonicalize(p, p + 1)
+        m1._canonicalize(p, p + 1)
+        assert q.mps.norm(m0) == approx(norm)
+        assert q.mps.norm(m1) == approx(norm)
+        assert q.mps.is_canonical(m0)
+        assert q.mps.is_canonical(m1)
+
+    v = np.random.random(2**n).reshape((2,) * n + (1,))
+    v /= np.linalg.norm(v)
+    tensors = q.mps.tensor_decomposition(v, maxdim)
+    m0 = q.mps.MPS_C(tensors)
+    m1 = q.mps.MPS_P(tensors)
+    norm = q.mps.norm(m0)
+
+    for _ in range(n):
+        p = np.random.randint(n)
+        m0._canonicalize(p)
+        m1._canonicalize(p)
+        assert q.mps.norm(m0) == approx(norm)
+        assert q.mps.norm(m1) == approx(norm)
+        assert q.mps.is_canonical(m0)
+        assert q.mps.is_canonical(m1)
+
+    for _ in range(n):
+        p = np.random.randint(n - 1)
+        m0._canonicalize(p, p + 1)
+        m1._canonicalize(p, p + 1)
+        assert q.mps.norm(m0) == approx(norm)
+        assert q.mps.norm(m1) == approx(norm)
+        assert q.mps.is_canonical(m0)
+        assert q.mps.is_canonical(m1)
 
 
 if __name__ == "__main__":

@@ -5,15 +5,12 @@ import qailo as q
 def test_mps():
     n = 4
     c = q.util.str2binary("1100")
-    mps = q.mps.MPS(q.mps.product_state(n, c))
-    print(n, c, mps)
-    sv = q.mps.state_vector(mps)
-    print(sv)
-    print(q.sv.state_vector(n, c))
-    v = q.sv.vector(sv)
-    print(v)
-
-    assert np.allclose(sv, q.sv.state_vector(n, c))
+    m0 = q.mps.MPS_C(q.mps.product_state(n, c))
+    m1 = q.mps.MPS_P(q.mps.product_state(n, c))
+    v0 = q.mps.state_vector(m0)
+    v1 = q.mps.state_vector(m1)
+    assert np.allclose(v0, q.sv.state_vector(n, c))
+    assert np.allclose(v1, q.sv.state_vector(n, c))
 
 
 if __name__ == "__main__":

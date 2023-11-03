@@ -21,19 +21,43 @@ def test_projector():
     for _ in range(nt):
         n0, n1, n2, n3, n4, n5, d = np.random.randint(2, maxn, size=(7,))
         T0 = np.random.random((n0, n1, n2, n3))
-        T1 = np.random.random((n2, n3, n4, n5))
-        WL, WR = q.mps.projector(T0, [0, 1, 4, 5], T1, [4, 5, 2, 3], nkeep=d)
+        T1 = np.random.random((n3, n2, n4, n5))
+        WL, WR = q.mps.projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
         assert WL.shape[2] <= d and WR.shape[2] <= d
         assert WL.shape[0] == n2 and WL.shape[1] == n3
         assert WR.shape[0] == n2 and WR.shape[1] == n3
         A = np.einsum(
-            T0, [0, 1, 4, 5], WR, [4, 5, 6], WL.conj(), [7, 8, 6], T1, [7, 8, 2, 3]
+            T0, [0, 1, 4, 5], WR, [4, 5, 6], WL.conj(), [7, 8, 6], T1, [8, 7, 2, 3]
         )
 
         L, R = q.mps.tensor_svd(
-            np.einsum(T0, [0, 1, 4, 5], T1, [4, 5, 2, 3]), [[0, 1], [2, 3]], nkeep=d
+            np.einsum(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3]), [[0, 1], [2, 3]], nkeep=d
         )
         B = np.einsum(L, [0, 1, 4], R, [4, 2, 3])
+        assert np.allclose(A, B)
+
+    for _ in range(nt):
+        w0 = np.random.random((4, 4)) + 1.0j * np.random.random((4, 4))
+        t0 = np.random.random((4, 2, 3)) + 1.0j * np.random.random((4, 2, 3))
+        t1 = np.random.random((3, 2, 2)) + 1.0j * np.random.random((3, 2, 2))
+        w2 = np.random.random((2, 2)) + 1.0j * np.random.random((2, 2))
+        p = np.random.random((2, 2, 2, 2)) + 1.0j * np.random.random((2, 2, 2, 2))
+        B = np.einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
+        p0, p1 = q.mps.svd.tensor_svd(p, [[0, 2], [1, 3]])
+        assert np.allclose(np.einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
+        t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
+        t1 = np.einsum(t1, [0, 4, 3], p1, [1, 2, 4])
+        assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [5, 4, 2, 3]), B)
+        tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
+        tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
+        WL, WR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
+        assert np.allclose(
+            np.einsum(WL.conj(), [2, 3, 0], WR, [2, 3, 1]), np.identity(WL.shape[2])
+        )
+        tt0 = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
+        tt1 = np.einsum(WL.conj(), [3, 4, 0], t1, [4, 3, 1, 2])
+        A = np.einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
+        print(np.linalg.norm(A - B))
         assert np.allclose(A, B)
 
 
