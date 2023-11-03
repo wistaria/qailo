@@ -73,7 +73,6 @@ class MPS:
         assert self.cp[1] in range(n)
         for t in range(0, self.cp[0]):
             A = np.einsum(self.tensors[t], [2, 3, 1], self.tensors[t].conj(), [2, 3, 0])
-            # A = np.einsum("ijk,ijl->kl", self.tensors[t], self.tensors[t].conj())
             assert np.allclose(A, np.identity(A.shape[0]))
         for t in range(self.cp[1] + 1, n):
             A = np.einsum(self.tensors[t], [1, 3, 2], self.tensors[t].conj(), [0, 3, 2])
