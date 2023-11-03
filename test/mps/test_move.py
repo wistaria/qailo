@@ -23,7 +23,7 @@ def test_swap():
     for _ in range(64):
         s = np.random.randint(n - 1)
         print(f"swap tensors at {s} and {s+1}")
-        m.canonicalize(s)
+        m._canonicalize(s)
         _swap_tensors(m, s)
         assert q.mps.norm(m) == approx(norm)
 

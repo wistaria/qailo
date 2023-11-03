@@ -19,21 +19,16 @@ class MPS:
         tensors [cp(1)+1...n-1]: right canonical
     """
 
-    def __init__(self, tensors, q2t=None, t2q=None, cp=None):
+    def __init__(self, tensors):
         self.tensors = tensors
         n = len(self.tensors)
-        self.q2t = list(range(n)) if q2t is None else q2t
-        if t2q is not None:
-            self.t2q = t2q
-        else:
-            self.t2q = [0] * n
-            for p in range(n):
-                self.t2q[self.q2t[p]] = p
-        assert len(self.q2t) == n and len(self.t2q) == n
-        self.cp = cp if cp is not None else [0, n - 1]
-        assert 0 <= self.cp[0] and self.cp[0] <= self.cp[1] and self.cp[1] < n
+        self.q2t = list(range(n))
+        self.t2q = [0] * n
+        for p in range(n):
+            self.t2q[self.q2t[p]] = p
+        self.cp = [0, n - 1]
 
-    def canonicalize(self, p0, p1=None):
+    def _canonicalize(self, p0, p1=None):
         p1 = p0 if p1 is None else p1
         n = len(self.tensors)
         assert 0 <= p0 and p0 <= p1 and p1 < n
@@ -51,7 +46,7 @@ class MPS:
                 self.tensors[t] = R
         self.cp[1] = p1
 
-    def is_canonical(self):
+    def _is_canonical(self):
         # tensor shape
         n = len(self.tensors)
         dims = []
@@ -93,7 +88,7 @@ class MPS:
         apply 2-qubit operator on neighboring tensors, s and s+1
         """
         assert op.num_qubits(p) == 2
-        self.canonicalize(s, s + 1)
+        self._canonicalize(s, s + 1)
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
         if not reverse:

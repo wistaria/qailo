@@ -1,5 +1,5 @@
 def is_canonical(m):
-    return m.is_canonical()
+    return m._is_canonical()
 
 
 def is_mps(m):

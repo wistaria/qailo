@@ -20,13 +20,13 @@ def test_canonical():
 
     for _ in range(n):
         p = np.random.randint(n)
-        mps.canonicalize(p)
+        mps._canonicalize(p)
         assert q.mps.norm(mps) == approx(norm)
         assert q.mps.is_canonical(mps)
 
     for _ in range(n):
         p = np.random.randint(n - 1)
-        mps.canonicalize(p, p + 1)
+        mps._canonicalize(p, p + 1)
         assert q.mps.norm(mps) == approx(norm)
         assert q.mps.is_canonical(mps)
 
