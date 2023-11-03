@@ -8,7 +8,7 @@ def test_pure_state():
     assert q.op.is_density_matrix(dm)
 
     for i in range(n):
-        sv = q.sv.apply(q.op.h(), sv, [i])
+        sv = q.sv.apply(sv, q.op.h(), [i])
     print(q.sv.vector(sv))
     dm = q.sv.pure_state(sv)
     print(q.op.matrix(dm))

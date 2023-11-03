@@ -4,3 +4,7 @@ def is_canonical(m):
 
 def is_mps(m):
     return hasattr(m, "tensors")
+
+
+def num_qubits(m):
+    return len(m.tensors)

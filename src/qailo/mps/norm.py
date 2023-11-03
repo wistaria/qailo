@@ -1,6 +1,6 @@
 import numpy as np
 
-from .num_qubits import num_qubits
+from .type import num_qubits
 
 
 def norm(m):

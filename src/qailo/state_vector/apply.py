@@ -5,8 +5,8 @@ from ..util.strops import letters, replace
 from . import type as sv
 
 
-def apply(p, v, pos=None):
-    assert op.is_operator(p) and sv.is_state_vector(v)
+def apply(v, p, pos=None):
+    assert sv.is_state_vector(v) and op.is_operator(p)
     n = sv.num_qubits(v)
     m = op.num_qubits(p)
     if pos is None:

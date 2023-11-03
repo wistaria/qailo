@@ -8,11 +8,11 @@ def main():
     print("state vector:", q.sv.vector(v))
     print("probabitily:", q.sv.probability(v))
 
-    v = q.sv.apply(q.op.h(), v, [0])
-    v = q.sv.apply(q.op.h(), v, [2])
-    v = q.sv.apply(q.op.cx(), v, [0, 1])
-    v = q.sv.apply(q.op.cz(), v, [1, 2])
-    v = q.sv.apply(q.op.h(), v, [2])
+    v = q.sv.apply(v, q.op.h(), [0])
+    v = q.sv.apply(v, q.op.h(), [2])
+    v = q.sv.apply(v, q.op.cx(), [0, 1])
+    v = q.sv.apply(v, q.op.cz(), [1, 2])
+    v = q.sv.apply(v, q.op.h(), [2])
 
     print("output:")
     print("state vector:", q.sv.vector(v))

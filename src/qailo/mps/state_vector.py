@@ -1,8 +1,7 @@
 import numpy as np
 
 from ..util.strops import letters, replace
-from .num_qubits import num_qubits
-from .type import is_mps
+from .type import is_mps, num_qubits
 
 
 def state_vector(m):

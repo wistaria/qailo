@@ -7,7 +7,7 @@ from pytest import approx
 def apply(op, m0, m1, v, pos, maxdim=None):
     m0 = q.mps.apply(m0, op, pos)
     m1 = q.mps.apply(m1, op, pos, maxdim)
-    v = q.sv.apply(op, v, pos)
+    v = q.sv.apply(v, op, pos)
     return m0, m1, v
 
 

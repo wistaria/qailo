@@ -5,32 +5,32 @@ def oracle(v, target):
     n = q.sv.num_qubits(v)
     for i in range(n):
         if (target >> i) & 1 == 0:
-            v = q.sv.apply(q.op.x(), v, [i])
+            v = q.sv.apply(v, q.op.x(), [i])
     assert q.op.is_operator(q.op.cz(n))
     assert q.sv.is_state_vector(v)
-    v = q.sv.apply(q.op.cz(n), v)
+    v = q.sv.apply(v, q.op.cz(n))
     for i in range(n):
         if (target >> i) & 1 == 0:
-            v = q.sv.apply(q.op.x(), v, [i])
+            v = q.sv.apply(v, q.op.x(), [i])
     return v
 
 
 def diffusion(v):
     n = q.sv.num_qubits(v)
     for i in range(n):
-        v = q.sv.apply(q.op.h(), v, [i])
-        v = q.sv.apply(q.op.x(), v, [i])
-    v = q.sv.apply(q.op.cz(n), v)
+        v = q.sv.apply(v, q.op.h(), [i])
+        v = q.sv.apply(v, q.op.x(), [i])
+    v = q.sv.apply(v, q.op.cz(n))
     for i in range(n):
-        v = q.sv.apply(q.op.x(), v, [i])
-        v = q.sv.apply(q.op.h(), v, [i])
+        v = q.sv.apply(v, q.op.x(), [i])
+        v = q.sv.apply(v, q.op.h(), [i])
     return v
 
 
 def grover(n, target, iter):
     v = q.sv.state_vector(n)
     for i in range(n):
-        v = q.sv.apply(q.op.h(), v, [i])
+        v = q.sv.apply(v, q.op.h(), [i])
     for k in range(iter):
         v = oracle(v, target)
         v = diffusion(v)
