@@ -8,4 +8,7 @@ def vector(v, c=None):
         return v.reshape((2**n,))
     else:
         assert isinstance(c, list)
-        return v[*c]
+        w = v
+        for x in c:
+            w = w[x]
+        return w
