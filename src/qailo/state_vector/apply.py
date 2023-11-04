@@ -20,3 +20,9 @@ def apply(v, p, pos=None):
         ss_v[pos[i]] = ss_op[m + i]
         ss_to[pos[i]] = ss_op[i]
     return np.einsum(v, ss_v, p, ss_op, ss_to)
+
+
+def apply_seq(v, seq):
+    for p, qubit in seq:
+        v = apply(v, p, qubit)
+    return v

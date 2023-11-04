@@ -22,6 +22,7 @@ class MPS_C:
     """
 
     def __init__(self, tensors):
+        assert isinstance(tensors, list)
         self.tensors = deepcopy(tensors)
         n = len(self.tensors)
         self.q2t = list(range(n))

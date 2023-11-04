@@ -1,4 +1,4 @@
-from .apply import apply
+from .apply import apply, apply_seq
 from .fidelity import fidelity
 from .is_close import is_close
 from .probability import probability
@@ -9,6 +9,7 @@ from .vector import vector
 
 __all__ = [
     apply,
+    apply_seq,
     fidelity,
     is_close,
     probability,

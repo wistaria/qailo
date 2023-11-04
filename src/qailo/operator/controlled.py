@@ -1,7 +1,7 @@
 import numpy as np
 
 from .matrix import matrix
-from .one_qubit import x, z
+from .one_qubit import p, x, z
 from .type import is_operator, num_qubits
 
 
@@ -12,6 +12,10 @@ def controlled(u):
     op = np.identity(2**n).reshape([2, 2**m, 2, 2**m])
     op[1, :, 1, :] = matrix(u)
     return op.reshape((2,) * (2 * n))
+
+
+def cp(phi):
+    return controlled(p(phi))
 
 
 def cx(n=2):

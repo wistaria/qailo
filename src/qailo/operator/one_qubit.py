@@ -5,20 +5,24 @@ def h():
     return np.array([[1, 1], [1, -1]]) / np.sqrt(2)
 
 
-def rx(p):
-    c = np.cos(p / 2)
-    s = np.sin(p / 2)
+def p(phi):
+    return np.array([[1, 0], [0, np.exp(1j * phi)]])
+
+
+def rx(phi):
+    c = np.cos(phi / 2)
+    s = np.sin(phi / 2)
     return np.array([[c, -1j * s], [-1j * s, c]])
 
 
-def ry(p):
-    c = np.cos(p / 2)
-    s = np.sin(p / 2)
+def ry(phi):
+    c = np.cos(phi / 2)
+    s = np.sin(phi / 2)
     return np.array([[c, -s], [s, c]])
 
 
-def rz(p):
-    return np.array([[np.exp(-1j * p / 2), 0], [0, np.exp(1j * p / 2)]])
+def rz(phi):
+    return np.array([[np.exp(-1j * phi / 2), 0], [0, np.exp(1j * phi / 2)]])
 
 
 def s():
