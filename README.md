@@ -9,9 +9,10 @@
 
 ### Design Policy
 
-* Depends only on numpy and matplotlib (and pytest for unit testing).
+* Depends only on numpy and matplotlib (and pytest for unit tests).
 * Pure functions only (always return the same output for each input, with no side effects).
-* No new classes are introduced. (state vectors, density matrices, and operators are all numpy.array.)
+   * Some exceptional functions that are not pure have names beginning with '_'.
+* No new classes are introduced except for MPS. (state vectors, density matrices, and operators are all numpy.array.)
 * All functions are less than 30 lines.
 
 ### Installation
@@ -38,22 +39,22 @@
 
 * examples
   ```bash
-  $ python3 example/shimada-2.2.py
+  $ python3 example/simple.py
   $ python3 example/grover.py
   ```
 
 ### Shape of arrays
 
-* state vector
-  - length: n + 1
+* state vector: numpy.ndarray
+  - number of legs: n + 1
   - shape: [2,2,...,2,1]
 
-* density matrix
-  - length: 2 * n + 2
+* density matrix: numpy.ndarray
+  - number of legs: 2 * n + 2
   - shape: [2,2,...,2,1,1]
 
-* operator
-  - length: 2 * n
+* operator: numpy.ndarray
+  - number of legs: 2 * n
   - shape: [2,2,...,2]
 
 where n is the number of qubits.
