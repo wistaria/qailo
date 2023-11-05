@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import qailo as q
 
 
@@ -25,17 +27,15 @@ def diffusion(v):
     return v
 
 
-def grover(n, target, iter, use_mps):
-    if use_mps:
-        v = q.mps.zero(n)
-    else:
-        v = q.sv.zero(n)
-    for i in range(n):
-        v = q.apply(v, q.op.h(), [i])
-    for k in range(iter):
-        v = oracle(v, target)
-        v = diffusion(v)
-    return v
+def grover(v, target, iter):
+    w = deepcopy(v)
+    n = q.num_qubits(w)
+    for k in range(n):
+        w = q.apply(w, q.op.h(), [k])
+    for _ in range(iter):
+        w = oracle(w, target)
+        w = diffusion(w)
+    return w
 
 
 if __name__ == "__main__":
@@ -45,7 +45,8 @@ if __name__ == "__main__":
     print("# number of qbits = {}".format(n))
     print("# target state = {}".format(q.util.binary2str(n, target)))
     print("# iterations = {}".format(iter))
-    prob = q.probability(grover(n, target, iter, False))
+    v = q.sv.zero(n)
+    prob = q.probability(grover(v, target, iter))
     for i in range(2**n):
         if i == target:
             print("* {} {}".format(q.util.binary2str(n, i), prob[i]))

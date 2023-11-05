@@ -1,11 +1,7 @@
 import qailo as q
 
 
-def main(use_mps=False):
-    if use_mps:
-        v = q.mps.zero(3)
-    else:
-        v = q.sv.zero(3)
+def main(v):
     print("input:")
     print("state vector:", q.vector(v))
     print("probabitily:", q.probability(v))
@@ -35,6 +31,7 @@ def plot(v):
 if __name__ == "__main__":
     import sys
 
-    v = main()
+    v = q.sv.zero(3)
+    v = main(v)
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
         plot(v)

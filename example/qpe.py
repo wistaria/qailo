@@ -25,16 +25,12 @@ def qpe(n, u, v):
 
 
 if __name__ == "__main__":
-    use_mps = False
     n = 3
     phi = 2 * np.pi * (1 / 3)
     u = q.op.p(phi)
     v = q.sv.zero()
     v = q.apply(v, q.op.x())
-    if use_mps:
-        v = q.mps.product_state([q.mps.zero(n), v])
-    else:
-        v = q.sv.product_state([q.sv.zero(n), v])
+    v = q.sv.product_state([q.sv.zero(n), v])
     v = qpe(n, u, v)
     prob = q.sv.probability(v, list(range(n)))
     for i in range(len(prob)):
