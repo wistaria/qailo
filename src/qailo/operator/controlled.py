@@ -9,7 +9,7 @@ def controlled(u):
     assert is_operator(u)
     m = num_qubits(u)
     n = m + 1
-    op = np.identity(2**n).reshape([2, 2**m, 2, 2**m])
+    op = np.identity(2**n, dtype=u.dtype).reshape([2, 2**m, 2, 2**m])
     op[1, :, 1, :] = matrix(u)
     return op.reshape((2,) * (2 * n))
 

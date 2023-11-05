@@ -16,4 +16,4 @@ def trace(q, pos=None):
     ss = list(range(2 * n))
     for i in pos:
         ss[n + i] = ss[i]
-    return np.einsum(q, ss)
+    return np.einsum(q.reshape((2,) * (2 * n)), ss)

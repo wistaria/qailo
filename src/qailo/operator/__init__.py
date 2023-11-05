@@ -10,6 +10,7 @@ from .controlled import (
 )
 from .hconj import hconj
 from .identity import identity
+from .inverse import inverse_seq
 from .matrix import matrix
 from .multiply import multiply
 from .one_qubit import h, p, rx, ry, rz, s, t, x, y, z
@@ -39,6 +40,7 @@ __all__ = [
     z,
     hconj,
     identity,
+    inverse_seq,
     is_close,
     is_hermitian,
     is_identity,

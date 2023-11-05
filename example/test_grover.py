@@ -5,7 +5,7 @@ from pytest import approx
 
 def test_simple():
     n = 4
-    target = 0b0000
+    target = q.util.str2binary("0000")
     iter = 2 ** (n // 2)
     prob = q.probability(grover(n, target, iter, False))
     assert prob[0] == approx(0.581704139709473)

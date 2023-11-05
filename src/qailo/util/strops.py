@@ -1,5 +1,5 @@
 def binary2str(n, i):
-    return bin(i)[2:].zfill(n)
+    return bin(i)[2:].zfill(n)[::-1]
 
 
 def str2binary(s):
@@ -8,5 +8,5 @@ def str2binary(s):
     for i in range(n):
         assert s[i] == "0" or s[i] == "1"
         if s[i] == "1":
-            c += 2 ** (n - i - 1)
+            c += 2**i
     return c
