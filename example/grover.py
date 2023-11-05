@@ -27,9 +27,9 @@ def diffusion(v):
 
 def grover(n, target, iter, use_mps):
     if use_mps:
-        v = q.mps.MPS_P(q.mps.product_state(n))
+        v = q.mps.zero(n)
     else:
-        v = q.sv.state_vector(n)
+        v = q.sv.zero(n)
     for i in range(n):
         v = q.apply(v, q.op.h(), [i])
     for k in range(iter):

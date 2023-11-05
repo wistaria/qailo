@@ -2,6 +2,8 @@ import random
 
 import qailo as q
 from pytest import approx
+from qailo.mps.mps_c import MPS_C
+from qailo.mps.mps_p import MPS_P
 
 
 def apply(op, m0, m1, m2, m3, v, seq, pos, maxdim=None):
@@ -19,11 +21,11 @@ def test_apply():
     p = 64
     maxdim = 2
 
-    m0 = q.mps.MPS_C(q.mps.product_state(n))
-    m1 = q.mps.MPS_P(q.mps.product_state(n))
-    m2 = q.mps.MPS_C(q.mps.product_state(n))
-    m3 = q.mps.MPS_P(q.mps.product_state(n))
-    v = q.sv.state_vector(n)
+    m0 = q.mps.zero(n, MPS_C)
+    m1 = q.mps.zero(n, MPS_P)
+    m2 = q.mps.zero(n, MPS_C)
+    m3 = q.mps.zero(n, MPS_P)
+    v = q.sv.zero(n)
     seq = []
 
     i = 4
@@ -84,7 +86,7 @@ def test_apply():
     assert f1 == approx(1)
     # assert f2 == approx(f3)
 
-    m4 = q.mps.MPS_P(q.mps.product_state(n))
+    m4 = q.mps.zero(n, MPS_P)
     f4 = q.sv.fidelity(q.mps.state_vector(q.mps.apply_seq(m4, seq)), v)
     assert f4 == approx(1)
 

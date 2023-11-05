@@ -4,8 +4,8 @@ from pytest import approx
 
 
 def test_fidelity():
-    for n in range(8):
-        sv0 = q.sv.state_vector(n)
+    for n in range(1, 8):
+        sv0 = q.sv.zero(n)
         sv1 = sv0
         for i in range(n):
             sv1 = q.sv.apply(sv1, q.op.h(), [i])

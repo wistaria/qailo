@@ -4,9 +4,9 @@ from pytest import approx
 
 
 def test_apply_seq():
-    for n in range(8):
-        v0 = q.sv.state_vector(n)
-        v1 = q.sv.state_vector(n)
+    for n in range(1, 8):
+        v0 = q.sv.zero(n)
+        v1 = q.sv.zero(n)
         seq = []
         for i in range(n):
             v1 = q.apply(v1, q.op.h(), [i])

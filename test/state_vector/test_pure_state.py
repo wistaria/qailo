@@ -3,7 +3,7 @@ import qailo as q
 
 def test_pure_state():
     n = 2
-    sv = q.sv.state_vector(n)
+    sv = q.sv.product_state([q.sv.zero()] * n)
     dm = q.sv.pure_state(sv)
     assert q.op.is_density_matrix(dm)
 

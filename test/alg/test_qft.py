@@ -8,7 +8,7 @@ def test_qft():
     target = 5
 
     # generate result of qft of target
-    v = q.sv.state_vector(n)
+    v = q.sv.zero(n)
     for p in range(n):
         v = q.apply(v, q.op.h(), [p])
     v = q.apply(v, q.op.p(target * np.pi / 4), [0])

@@ -3,9 +3,9 @@ import qailo as q
 
 def main(use_mps=False):
     if use_mps:
-        v = q.mps.MPS_C(q.mps.tensor_decomposition(q.sv.state_vector(3)))
+        v = q.mps.zero(3)
     else:
-        v = q.sv.state_vector(3)
+        v = q.sv.zero(3)
     print("input:")
     print("state vector:", q.vector(v))
     print("probabitily:", q.probability(v))

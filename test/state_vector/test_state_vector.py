@@ -15,6 +15,8 @@ def test_product_state():
     n = 8
     v0 = q.sv.product_state([q.sv.zero()] * n)
     v1 = q.sv.product_state([q.sv.one()] * n)
+    assert np.allclose(v0, q.sv.zero(n))
+    assert np.allclose(v1, q.sv.one(n))
     for p in range(n):
         v1 = q.sv.apply(v1, q.op.x(), [p])
     assert np.allclose(v0, v1)

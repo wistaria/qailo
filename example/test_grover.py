@@ -3,7 +3,7 @@ from grover import grover
 from pytest import approx
 
 
-def test_simple():
+def test_grover():
     n = 4
     target = q.util.str2binary("0000")
     iter = 2 ** (n // 2)
