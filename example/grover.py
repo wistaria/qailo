@@ -2,35 +2,36 @@ import qailo as q
 
 
 def oracle(v, target):
-    n = q.sv.num_qubits(v)
+    n = q.num_qubits(v)
     for i in range(n):
         if (target >> i) & 1 == 0:
-            v = q.sv.apply(v, q.op.x(), [i])
-    assert q.op.is_operator(q.op.cz(n))
-    assert q.sv.is_state_vector(v)
-    v = q.sv.apply(v, q.op.cz(n))
+            v = q.apply(v, q.op.x(), [i])
+    v = q.apply_seq(v, q.op.controlled_seq(q.op.z(), list(range(n))))
     for i in range(n):
         if (target >> i) & 1 == 0:
-            v = q.sv.apply(v, q.op.x(), [i])
+            v = q.apply(v, q.op.x(), [i])
     return v
 
 
 def diffusion(v):
-    n = q.sv.num_qubits(v)
+    n = q.num_qubits(v)
     for i in range(n):
-        v = q.sv.apply(v, q.op.h(), [i])
-        v = q.sv.apply(v, q.op.x(), [i])
-    v = q.sv.apply(v, q.op.cz(n))
+        v = q.apply(v, q.op.h(), [i])
+        v = q.apply(v, q.op.x(), [i])
+    v = q.apply_seq(v, q.op.controlled_seq(q.op.z(), list(range(n))))
     for i in range(n):
-        v = q.sv.apply(v, q.op.x(), [i])
-        v = q.sv.apply(v, q.op.h(), [i])
+        v = q.apply(v, q.op.x(), [i])
+        v = q.apply(v, q.op.h(), [i])
     return v
 
 
-def grover(n, target, iter):
-    v = q.sv.state_vector(n)
+def grover(n, target, iter, use_mps):
+    if use_mps:
+        v = q.mps.MPS_P(q.mps.product_state(n))
+    else:
+        v = q.sv.state_vector(n)
     for i in range(n):
-        v = q.sv.apply(v, q.op.h(), [i])
+        v = q.apply(v, q.op.h(), [i])
     for k in range(iter):
         v = oracle(v, target)
         v = diffusion(v)
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     print("# number of qbits = {}".format(n))
     print("# target state = {}".format(q.util.binary2str(n, target)))
     print("# iterations = {}".format(iter))
-    prob = q.sv.probability(grover(n, target, iter))
+    prob = q.probability(grover(n, target, iter, False))
     for i in range(2**n):
         if i == target:
             print("* {} {}".format(q.util.binary2str(n, i), prob[i]))

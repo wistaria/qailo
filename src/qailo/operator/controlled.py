@@ -65,3 +65,18 @@ def control_end(u):
     op[1, :, 1, 0, :] = np.identity(2**m)
     op[1, :, 1, 1, :] = u
     return op.reshape((2,) * n + (4,) + (2,) * m)
+
+
+def controlled_seq(u, pos):
+    n = len(pos)
+    seq = []
+    if n <= 1:
+        raise ValueError
+    elif n == 2:
+        seq.append([controlled(u), pos])
+    else:
+        seq.append([control_begin(), [pos[0], pos[1]]])
+        for i in range(1, n - 2):
+            seq.append([control_propagate(), [pos[i], pos[i + 1]]])
+        seq.append([control_end(u), [pos[-2], pos[-1]]])
+    return seq

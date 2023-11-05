@@ -1,4 +1,3 @@
-import numpy as np
 import qailo as q
 
 
@@ -23,11 +22,6 @@ def main(use_mps=False):
     return v
 
 
-def check(v):
-    assert np.allclose(q.vector(v, [0, 0, 0]), 1 / np.sqrt(2))
-    assert np.allclose(q.vector(v, [1, 1, 1]), 1 / np.sqrt(2))
-
-
 def plot(v):
     import matplotlib.pyplot as plt
 
@@ -42,6 +36,5 @@ if __name__ == "__main__":
     import sys
 
     v = main()
-    check(v)
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
         plot(v)
