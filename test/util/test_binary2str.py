@@ -1,4 +1,4 @@
-from qailo.util.strops import binary2str, str2binary
+from qailo.util.bitops import binary2str, str2binary
 
 
 def test_binary2str():

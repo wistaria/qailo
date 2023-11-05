@@ -3,13 +3,13 @@ import qailo as q
 
 def oracle(v, target):
     n = q.num_qubits(v)
-    for i in range(n):
-        if (target >> (n - i - 1)) & 1 == 0:
-            v = q.apply(v, q.op.x(), [i])
+    for k in range(n):
+        if q.util.bit(n, target, k) == 0:
+            v = q.apply(v, q.op.x(), [k])
     v = q.apply_seq(v, q.op.controlled_seq(q.op.z(), list(range(n))))
-    for i in range(n):
-        if (target >> (n - i - 1)) & 1 == 0:
-            v = q.apply(v, q.op.x(), [i])
+    for k in range(n):
+        if q.util.bit(n, target, k) == 0:
+            v = q.apply(v, q.op.x(), [k])
     return v
 
 
