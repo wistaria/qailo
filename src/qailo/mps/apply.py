@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from ..operator import type as op
 from ..operator.swap import swap
+from . import type as mps
 
 
 def _swap_tensors(m, s, maxdim=None):
@@ -26,26 +27,31 @@ def _move_qubit(m, p, s, maxdim=None):
             _swap_tensors(m, u - 1, maxdim=maxdim)
 
 
-def _apply(m, p, qubit, maxdim=None):
-    assert op.is_operator(p) and len(qubit) == op.num_qubits(p)
+def _apply(m, p, pos=None, maxdim=None):
+    assert op.is_operator(p)
+    n = mps.num_qubits(m)
+    if pos is None:
+        assert op.num_qubits(p) == n
+        pos = list(range(n))
+    assert len(pos) == op.num_qubits(p)
     if op.num_qubits(p) == 1:
-        m._apply_one(p, m.q2t[qubit[0]])
+        m._apply_one(p, m.q2t[pos[0]])
     elif op.num_qubits(p) == 2:
-        ss = [m.q2t[qubit[0]], m.q2t[qubit[1]]]
+        ss = [m.q2t[pos[0]], m.q2t[pos[1]]]
         assert ss[0] != ss[1]
         if ss[0] < ss[1]:
-            _move_qubit(m, qubit[1], ss[0] + 1)
+            _move_qubit(m, pos[1], ss[0] + 1)
             m._apply_two(p, ss[0], maxdim=maxdim)
         else:
-            _move_qubit(m, qubit[0], ss[1] + 1)
+            _move_qubit(m, pos[0], ss[1] + 1)
             m._apply_two(p, ss[1], maxdim=maxdim, reverse=True)
     else:
         raise ValueError
     return m
 
 
-def apply(m, p, qubit, maxdim=None):
-    return _apply(deepcopy(m), p, qubit, maxdim)
+def apply(m, p, pos=None, maxdim=None):
+    return _apply(deepcopy(m), p, pos, maxdim)
 
 
 def apply_seq(m, seq, maxdim=None):

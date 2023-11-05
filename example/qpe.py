@@ -1,35 +1,41 @@
+from copy import deepcopy
+
 import numpy as np
 import qailo as q
 
 
-def qpe(n, u, ev):
+def qpe(n, u, v):
     m = q.num_qubits(u)
-    assert q.num_qubits(ev) == m
-    v = q.sv.product_state([q.sv.zero(n), ev])
-    assert q.num_qubits(v) == n + m
+    w = deepcopy(v)
+    assert q.num_qubits(w) == m + n
 
     for p in range(n):
-        v = q.apply(v, q.op.h(), [p])
+        w = q.apply(w, q.op.h(), [p])
 
     cp = q.op.controlled(u)
     rep = 1
     for p in range(n):
         for _ in range(rep):
             # print(f"apply cu on {p} and {list(range(n,n+m))}")
-            v = q.apply(v, cp, [p] + list(range(n, n + m)))
+            w = q.apply(w, cp, [p] + list(range(n, n + m)))
         rep = rep * 2
 
-    v = q.apply_seq(v, q.alg.qft.inverse_qft_seq(n))
-    return v
+    w = q.apply_seq(w, q.alg.qft.inverse_qft_seq(n))
+    return w
 
 
 if __name__ == "__main__":
+    use_mps = False
     n = 3
     phi = 2 * np.pi * (1 / 3)
     u = q.op.p(phi)
-    ev = q.sv.zero()
-    ev = q.apply(ev, q.op.x())
-    v = qpe(n, u, ev)
-    prob = np.diag(q.op.matrix(q.op.trace(q.sv.pure_state(v), [n])).real)
+    v = q.sv.zero()
+    v = q.apply(v, q.op.x())
+    if use_mps:
+        v = q.mps.product_state([q.mps.zero(n), v])
+    else:
+        v = q.sv.product_state([q.sv.zero(n), v])
+    v = qpe(n, u, v)
+    prob = q.sv.probability(v, list(range(n)))
     for i in range(len(prob)):
         print("{} {}".format(q.util.binary2str(n, i), prob[i]))

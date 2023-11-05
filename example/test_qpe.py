@@ -8,9 +8,19 @@ def test_qpe():
     n = 3
     phi = 2 * np.pi * (1 / 8)
     u = q.op.p(phi)
-    ev = q.sv.zero()
-    ev = q.apply(ev, q.op.x())
-    v = qpe(n, u, ev)
-    prob = np.diag(q.op.matrix(q.op.trace(q.sv.pure_state(v), [n])).real)
+
+    v = q.sv.zero()
+    v = q.apply(v, q.op.x())
+    v = q.sv.product_state([q.sv.zero(n), v])
+    v = qpe(n, u, v)
+    prob = q.probability(v, list(range(n)))
+    assert prob[4] == approx(1)
+    assert prob[0] == approx(0)
+
+    v = q.mps.zero()
+    v = q.apply(v, q.op.x())
+    v = q.mps.product_state([q.mps.zero(n), v])
+    v = qpe(n, u, v)
+    prob = q.probability(v, list(range(n)))
     assert prob[4] == approx(1)
     assert prob[0] == approx(0)

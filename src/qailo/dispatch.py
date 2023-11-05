@@ -33,11 +33,11 @@ def num_qubits(v):
     assert False
 
 
-def probability(v, c=None):
+def probability(v, pos=None):
     if sv.is_state_vector(v):
-        return sv.probability(v, c)
+        return sv.probability(v, pos)
     elif mps.is_mps(v):
-        return sv.probability(mps.state_vector(v), c)
+        return sv.probability(mps.state_vector(v), pos)
     assert False
 
 
