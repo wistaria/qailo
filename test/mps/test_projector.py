@@ -11,7 +11,7 @@ def test_projector():
         n0, n1, n2, d = np.random.randint(2, maxn, size=(4,))
         T0 = np.random.random((n0, n1))
         T1 = np.random.random((n1, n2))
-        _, WL, WR = q.mps.projector(T0, [0, 2], T1, [2, 1], nkeep=d)
+        _, WL, WR = q.mps.compact_projector(T0, [0, 2], T1, [2, 1], nkeep=d)
         assert WL.shape[1] <= d and WR.shape[1] <= d
         assert WL.shape[0] == n1 and WR.shape[0] == n1
         A = np.einsum(T0, [0, 2], WR, [2, 3], WL.conj().T, [3, 4], T1, [4, 1])
@@ -24,7 +24,7 @@ def test_projector():
         n0, n1, n2, n3, n4, n5, d = np.random.randint(2, maxn, size=(7,))
         T0 = np.random.random((n0, n1, n2, n3))
         T1 = np.random.random((n3, n2, n4, n5))
-        _, WL, WR = q.mps.projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
+        _, WL, WR = q.mps.compact_projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
         assert WL.shape[2] <= d and WR.shape[2] <= d
         assert WL.shape[0] == n2 and WL.shape[1] == n3
         assert WR.shape[0] == n2 and WR.shape[1] == n3
@@ -52,7 +52,7 @@ def test_projector():
         assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [5, 4, 2, 3]), B)
         tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
-        _, WL, WR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
+        _, WL, WR = q.mps.compact_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
         assert np.allclose(
             np.einsum(WL.conj(), [2, 3, 0], WR, [2, 3, 1]), np.identity(WL.shape[2])
         )
@@ -76,7 +76,7 @@ def test_projector():
         assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [4, 5, 2, 3]), B)
         tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
-        _, WL, WR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
+        _, WL, WR = q.mps.compact_projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
         assert np.allclose(
             np.einsum(WL.conj(), [2, 3, 0], WR, [2, 3, 1]), np.identity(WL.shape[2])
         )
@@ -110,7 +110,7 @@ def test_full_projector():
         d = min(d, n0 * n1, n4 * n5)
         T0 = np.random.random((n0, n1, n2, n3))
         T1 = np.random.random((n3, n2, n4, n5))
-        S, WL, WR = q.mps.projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
+        S, WL, WR = q.mps.compact_projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
         assert WL.shape[0] == n2 and WL.shape[1] == n3
         assert WR.shape[0] == n2 and WR.shape[1] == n3
         A = np.einsum(

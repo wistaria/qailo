@@ -52,7 +52,7 @@ def collect_legs(ss0, ss1):
     return legs0L, legs0R, legs1L, legs1R
 
 
-def projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
+def compact_projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
     ss0, ss1 = normalize_ss(ss0_in, ss1_in)
     legs0L, legs0R, legs1L, legs1R = collect_legs(ss0, ss1)
     dim0L = np.prod([T0.shape[i] for i in legs0L])
@@ -92,7 +92,7 @@ def _full_projector(T0, ss0_in, T1, ss1_in, tol=1e-12):
     d: number of non-zero singular values
     WL, WR: full projector WL* @ WR = I
     """
-    S, WLd, WRd = projector(T0, ss0_in, T1, ss1_in, tol=tol)
+    S, WLd, WRd = compact_projector(T0, ss0_in, T1, ss1_in, tol=tol)
     d = S.shape[0]
     assert d == WLd.shape[-1] and d == WRd.shape[-1]
     dimsWL0 = WLd.shape[:-1]
