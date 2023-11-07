@@ -3,7 +3,7 @@ import random
 import qailo as q
 from pytest import approx
 from qailo.mps.mps_c import MPS_C
-from qailo.mps.mps_p import MPS_P
+from qailo.mps_p.mps_p import MPS_P
 
 
 def apply(op, m0, m1, m2, m3, v, seq, pos, maxdim=None):

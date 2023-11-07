@@ -17,7 +17,7 @@ def test_swap():
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
     m0 = q.mps.MPS_C(tensors)
-    m1 = q.mps.MPS_P(tensors)
+    m1 = q.mps_p.MPS_P(tensors)
     q.mps.is_canonical(m0)
     q.mps.is_canonical(m1)
     norm = q.mps.norm(m0)
@@ -62,7 +62,7 @@ def test_move():
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
     m0 = q.mps.MPS_C(tensors)
-    m1 = q.mps.MPS_P(tensors)
+    m1 = q.mps_p.MPS_P(tensors)
     q.mps.is_canonical(m0)
     q.mps.is_canonical(m1)
     norm = q.mps.norm(m0)

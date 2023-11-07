@@ -9,12 +9,12 @@ def test_simple():
     assert np.allclose(q.vector(v, [0, 0, 0]), 1 / np.sqrt(2))
     assert np.allclose(q.vector(v, [1, 1, 1]), 1 / np.sqrt(2))
 
-    v = q.mps.zero(3, q.mps.MPS_C)
+    v = q.mps.zero(3)
     v = simple.main(v)
     assert np.allclose(q.vector(v, [0, 0, 0]), 1 / np.sqrt(2))
     assert np.allclose(q.vector(v, [1, 1, 1]), 1 / np.sqrt(2))
 
-    v = q.mps.zero(3, q.mps.MPS_P)
+    v = q.mps_p.zero(3)
     v = simple.main(v)
     assert np.allclose(q.vector(v, [0, 0, 0]), 1 / np.sqrt(2))
     assert np.allclose(q.vector(v, [1, 1, 1]), 1 / np.sqrt(2))

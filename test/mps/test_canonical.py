@@ -15,7 +15,7 @@ def test_canonical():
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
     m0 = q.mps.MPS_C(tensors)
-    m1 = q.mps.MPS_P(tensors)
+    m1 = q.mps_p.MPS_P(tensors)
     norm = q.mps.norm(m0)
     assert q.mps.norm(m0) == approx(norm)
     assert q.mps.norm(m1) == approx(norm)
@@ -44,7 +44,7 @@ def test_canonical():
     v /= np.linalg.norm(v)
     tensors = q.mps.tensor_decomposition(v, maxdim)
     m0 = q.mps.MPS_C(tensors)
-    m1 = q.mps.MPS_P(tensors)
+    m1 = q.mps_p.MPS_P(tensors)
     norm = q.mps.norm(m0)
 
     for _ in range(n):

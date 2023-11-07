@@ -2,9 +2,9 @@ from copy import deepcopy
 
 import numpy as np
 
+from ..mps.svd import tensor_svd
 from ..operator import type as op
-from .projector import _full_projector
-from .svd import tensor_svd
+from .projector import compact_projector
 
 
 class MPS_P:
@@ -98,9 +98,9 @@ class MPS_P:
         apply 2-qubit operator on neighboring tensors, s and s+1
         """
         self._canonicalize(s, s + 1)
-        p0, p1 = tensor_svd(p, [[0, 2], [1, 3]])
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
+        p0, p1 = tensor_svd(p, [[0, 2], [1, 3]])
         if not reverse:
             t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
             t1 = np.einsum(t1, [0, 4, 3], p1, [1, 2, 4])
@@ -109,10 +109,6 @@ class MPS_P:
             t1 = np.einsum(t1, [0, 4, 3], p0, [2, 4, 1])
         tt0 = np.einsum(self.cmat[s], [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], self.cmat[s + 2], [4, 3])
-        _, d, WL, WR = _full_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
-        if maxdim is not None:
-            d = min(d, maxdim)
-        self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR[:, :, :d], [3, 4, 2])
-        self.tensors[s + 1] = np.einsum(
-            WL.conj()[:, :, :d], [3, 4, 0], t1, [4, 3, 1, 2]
-        )
+        _, WLh, WR = compact_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], maxdim)
+        self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
+        self.tensors[s + 1] = np.einsum(WLh, [3, 4, 0], t1, [4, 3, 1, 2])

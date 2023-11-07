@@ -1,6 +1,6 @@
 import numpy as np
 
-from .svd import compact_svd
+from ..mps.svd import compact_svd
 
 
 def normalize_ss(ss0, ss1):
@@ -69,7 +69,7 @@ def compact_projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
     V = np.einsum(V, [0, 1], np.sqrt(1 / S), [1], [0, 1])
     WL = np.einsum(TT0.conj(), [0] + ss_sum, U, [0, max(ss_sum) + 1])
     WR = np.einsum(TT1, [0] + ss_sum, V, [0, max(ss_sum) + 1])
-    return S, WL, WR
+    return S, WL.conj(), WR
 
 
 def _biorth(VL, VR):
@@ -92,7 +92,8 @@ def _full_projector(T0, ss0_in, T1, ss1_in, tol=1e-12):
     d: number of non-zero singular values
     WL, WR: full projector WL* @ WR = I
     """
-    S, WLd, WRd = compact_projector(T0, ss0_in, T1, ss1_in, tol=tol)
+    S, WLdh, WRd = compact_projector(T0, ss0_in, T1, ss1_in, tol=tol)
+    WLd = WLdh.conj()
     d = S.shape[0]
     assert d == WLd.shape[-1] and d == WRd.shape[-1]
     dimsWL0 = WLd.shape[:-1]
@@ -114,6 +115,6 @@ def _full_projector(T0, ss0_in, T1, ss1_in, tol=1e-12):
         assert S.shape == (m,) and WL.shape == (m, m) and WR.shape == (m, m)
         WL = WL.reshape(dimsWL0 + (m,))
         WR = WR.reshape(dimsWR0 + (m,))
-        return S, d, WL, WR
+        return S, d, WL.conj(), WR
     else:
-        return S, d, WLd, WRd
+        return S, d, WLd.conj(), WRd

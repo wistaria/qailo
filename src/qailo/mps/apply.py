@@ -18,7 +18,7 @@ def _swap_tensors(m, s, maxdim=None):
 
 def _move_qubit(m, p, s, maxdim=None):
     if m.q2t[p] != s:
-        # print(f"moving qubit {p} at {m.q2t[p]} to {s}")
+        print(f"moving qubit {p} at {m.q2t[p]} to {s}")
         for u in range(m.q2t[p], s):
             # print(f"swap tensors {u} and {u+1}")
             _swap_tensors(m, u, maxdim=maxdim)
@@ -54,8 +54,11 @@ def apply(m, p, pos=None, maxdim=None):
     return _apply(deepcopy(m), p, pos, maxdim)
 
 
-def apply_seq(m, seq, maxdim=None):
-    v = deepcopy(m)
+def _apply_seq(m, seq, maxdim=None):
     for p, qubit in seq:
-        _apply(v, p, qubit, maxdim)
-    return v
+        _apply(m, p, qubit, maxdim)
+    return m
+
+
+def apply_seq(m, seq, maxdim=None):
+    return _apply_seq(deepcopy(m), seq, maxdim)
