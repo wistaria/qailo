@@ -34,3 +34,7 @@ def test_qpe():
     prob = q.probability(v, list(range(n)))
     assert prob[4] == approx(1)
     assert prob[0] == approx(0)
+
+
+if __name__ == "__main__":
+    test_qpe()

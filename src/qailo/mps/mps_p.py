@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 
 from ..operator import type as op
-from .projector import projector
+from .projector import _full_projector
 from .svd import tensor_svd
 
 
@@ -109,6 +109,10 @@ class MPS_P:
             t1 = np.einsum(t1, [0, 4, 3], p0, [2, 4, 1])
         tt0 = np.einsum(self.cmat[s], [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], self.cmat[s + 2], [4, 3])
-        _, WL, WR = projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], nkeep=maxdim)
-        self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
-        self.tensors[s + 1] = np.einsum(WL.conj(), [3, 4, 0], t1, [4, 3, 1, 2])
+        _, d, WL, WR = _full_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
+        if maxdim is not None:
+            d = min(d, maxdim)
+        self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR[:, :, :d], [3, 4, 2])
+        self.tensors[s + 1] = np.einsum(
+            WL.conj()[:, :, :d], [3, 4, 0], t1, [4, 3, 1, 2]
+        )

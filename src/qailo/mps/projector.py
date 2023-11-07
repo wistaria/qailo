@@ -86,6 +86,12 @@ def _biorth(VL, VR):
 
 
 def _full_projector(T0, ss0_in, T1, ss1_in, tol=1e-12):
+    """
+    Return:
+    S: singular values
+    d: number of non-zero singular values
+    WL, WR: full projector WL* @ WR = I
+    """
     S, WLd, WRd = projector(T0, ss0_in, T1, ss1_in, tol=tol)
     d = S.shape[0]
     assert d == WLd.shape[-1] and d == WRd.shape[-1]
@@ -108,6 +114,6 @@ def _full_projector(T0, ss0_in, T1, ss1_in, tol=1e-12):
         assert S.shape == (m,) and WL.shape == (m, m) and WR.shape == (m, m)
         WL = WL.reshape(dimsWL0 + (m,))
         WR = WR.reshape(dimsWR0 + (m,))
-        return S, WL, WR
+        return S, d, WL, WR
     else:
-        return S, WLd, WRd
+        return S, d, WLd, WRd

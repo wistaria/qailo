@@ -39,8 +39,14 @@ def grover(v, target, iter):
 
 
 if __name__ == "__main__":
-    n = 4
-    target = q.util.str2binary("0111")
+    import sys
+
+    if len(sys.argv) == 1:
+        n = 4
+        target = q.util.str2binary("0101")
+    elif len(sys.argv) == 3:
+        n = int(sys.argv[1])
+        target = q.util.str2binary(sys.argv[2])
     iter = 2 ** (n // 2)
     print("# number of qbits = {}".format(n))
     print("# target state = {}".format(q.util.binary2str(n, target)))

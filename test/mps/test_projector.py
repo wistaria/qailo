@@ -95,7 +95,7 @@ def test_full_projector():
         d = min(d, n0, n2)
         T0 = np.random.random((n0, n1))
         T1 = np.random.random((n1, n2))
-        S, WL, WR = _full_projector(T0, [0, 2], T1, [2, 1])
+        S, _, WL, WR = _full_projector(T0, [0, 2], T1, [2, 1])
         assert WL.shape[0] == n1 and WR.shape[0] == n1
         A = np.einsum(
             T0, [0, 2], WR[:, :d], [2, 3], WL.conj().T[:d, :], [3, 4], T1, [4, 1]
@@ -144,7 +144,7 @@ def test_full_projector():
         assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [5, 4, 2, 3]), B)
         tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
-        _, WL, WR = _full_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
+        _, _, WL, WR = _full_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
         tt0 = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
         tt1 = np.einsum(WL.conj(), [3, 4, 0], t1, [4, 3, 1, 2])
         A = np.einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
@@ -174,7 +174,7 @@ def test_full_projector():
         assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [4, 5, 2, 3]), B)
         tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
-        _, WL, WR = _full_projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
+        _, _, WL, WR = _full_projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
         tt0 = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
         tt1 = np.einsum(WL.conj(), [3, 4, 0], t1, [3, 4, 1, 2])
         A = np.einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
