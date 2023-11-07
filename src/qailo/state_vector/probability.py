@@ -2,7 +2,7 @@ import numpy as np
 
 from ..operator.matrix import matrix
 from ..operator.trace import trace
-from .pure_state import pure_state
+from .density_matrix import density_matrix
 from .type import is_state_vector, num_qubits
 from .vector import vector
 
@@ -17,4 +17,4 @@ def probability(v, pos=None):
         for k in range(num_qubits(w)):
             if k not in pos:
                 tpos.append(k)
-        return np.diag(matrix(trace(pure_state(w), tpos).real))
+        return np.diag(matrix(trace(density_matrix(w), tpos).real))

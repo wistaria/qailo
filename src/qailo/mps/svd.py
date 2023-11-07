@@ -20,7 +20,7 @@ def tensor_svd(T, partition, canonical="center", nkeep=None, tol=1e-12):
     m = np.einsum(T, partition[0] + partition[1]).reshape(
         np.prod(dims0), np.prod(dims1)
     )
-    S, U, V = compact_svd(m, nkeep)
+    S, U, V = compact_svd(m, nkeep, tol)
     L = U
     R = V.conj().T
     if canonical == "center":
