@@ -3,7 +3,7 @@ import numpy as np
 from .type import is_state_vector, num_qubits
 
 
-def pure_state(v):
+def density_matrix(v):
     assert is_state_vector(v)
     n = num_qubits(v)
     w = v.copy()
