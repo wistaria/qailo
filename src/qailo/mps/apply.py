@@ -9,7 +9,7 @@ def _swap_tensors(m, s, maxdim=None):
     """
     swap neighboring two tensors at s and s+1
     """
-    assert s in range(0, len(m.tensors) - 1)
+    assert s in range(0, mps.num_qubits(m) - 1)
     m._apply_two(swap(), s, maxdim=maxdim)
     p0, p1 = m.t2q[s], m.t2q[s + 1]
     m.q2t[p0], m.q2t[p1] = s + 1, s

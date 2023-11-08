@@ -14,56 +14,43 @@ def test_canonical():
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
-    m0 = q.mps.MPS_C(tensors)
-    m1 = q.mps_p.MPS_P(tensors)
-    norm = q.mps.norm(m0)
-    assert q.mps.norm(m0) == approx(norm)
-    assert q.mps.norm(m1) == approx(norm)
-    assert q.mps.is_canonical(m0)
-    assert q.mps.is_canonical(m1)
+    for mps in [q.mps.MPS_C, q.mps_p.MPS_P, q.mps_t.MPS_T]:
+        m = mps(tensors)
+        norm = q.mps.norm(m)
+        assert q.mps.norm(m) == approx(norm)
+        assert q.mps.is_canonical(m)
 
-    for _ in range(n):
-        p = np.random.randint(n)
-        m0._canonicalize(p)
-        m1._canonicalize(p)
-        assert q.mps.norm(m0) == approx(norm)
-        assert q.mps.norm(m1) == approx(norm)
-        assert q.mps.is_canonical(m0)
-        assert q.mps.is_canonical(m1)
+        for _ in range(n):
+            p = np.random.randint(n)
+            m._canonicalize(p)
+            assert q.mps.norm(m) == approx(norm)
+            assert q.mps.is_canonical(m)
+            assert q.mps.is_canonical(m)
 
-    for _ in range(n):
-        p = np.random.randint(n - 1)
-        m0._canonicalize(p, p + 1)
-        m1._canonicalize(p, p + 1)
-        assert q.mps.norm(m0) == approx(norm)
-        assert q.mps.norm(m1) == approx(norm)
-        assert q.mps.is_canonical(m0)
-        assert q.mps.is_canonical(m1)
+        for _ in range(n):
+            p = np.random.randint(n - 1)
+            m._canonicalize(p, p + 1)
+            assert q.mps.norm(m) == approx(norm)
+            assert q.mps.is_canonical(m)
 
     v = np.random.random(2**n).reshape((2,) * n + (1,))
     v /= np.linalg.norm(v)
     tensors = q.mps.tensor_decomposition(v, maxdim)
-    m0 = q.mps.MPS_C(tensors)
-    m1 = q.mps_p.MPS_P(tensors)
-    norm = q.mps.norm(m0)
+    for mps in [q.mps.MPS_C, q.mps_p.MPS_P, q.mps_t.MPS_T]:
+        m = mps(tensors)
+        norm = q.mps.norm(m)
 
-    for _ in range(n):
-        p = np.random.randint(n)
-        m0._canonicalize(p)
-        m1._canonicalize(p)
-        assert q.mps.norm(m0) == approx(norm)
-        assert q.mps.norm(m1) == approx(norm)
-        assert q.mps.is_canonical(m0)
-        assert q.mps.is_canonical(m1)
+        for _ in range(n):
+            p = np.random.randint(n)
+            m._canonicalize(p)
+            assert q.mps.norm(m) == approx(norm)
+            assert q.mps.is_canonical(m)
 
-    for _ in range(n):
-        p = np.random.randint(n - 1)
-        m0._canonicalize(p, p + 1)
-        m1._canonicalize(p, p + 1)
-        assert q.mps.norm(m0) == approx(norm)
-        assert q.mps.norm(m1) == approx(norm)
-        assert q.mps.is_canonical(m0)
-        assert q.mps.is_canonical(m1)
+        for _ in range(n):
+            p = np.random.randint(n - 1)
+            m._canonicalize(p, p + 1)
+            assert q.mps.norm(m) == approx(norm)
+            assert q.mps.is_canonical(m)
 
 
 if __name__ == "__main__":

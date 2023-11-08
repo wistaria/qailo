@@ -4,9 +4,10 @@ import numpy as np
 
 from ..operator import type as op
 from .svd import tensor_svd
+from .type import MPS
 
 
-class MPS_C:
+class MPS_C(MPS):
     """
     MPS representation of quantum pure state
 
@@ -28,6 +29,9 @@ class MPS_C:
         self.q2t = list(range(n))
         self.t2q = list(range(n))
         self.cp = [0, n - 1]
+
+    def _tensor(self, t):
+        return self.tensors[t]
 
     def _canonicalize(self, p0, p1=None):
         p1 = p0 if p1 is None else p1

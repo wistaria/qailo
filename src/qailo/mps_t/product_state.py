@@ -1,14 +1,14 @@
 from ..mps.product_state import tensor_decomposition
 from ..state_vector.state_vector import one as sv_one
 from ..state_vector.state_vector import zero as sv_zero
-from .mps_p import MPS_P
+from .mps_t import MPS_T
 
 
 def product_state(states):
     tensors = []
     for s in states:
         tensors = tensors + tensor_decomposition(s)
-    return MPS_P(tensors)
+    return MPS_T(tensors)
 
 
 def zero(n=1):

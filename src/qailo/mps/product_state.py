@@ -1,6 +1,6 @@
+from ..dispatch import num_qubits
 from ..state_vector.state_vector import one as sv_one
 from ..state_vector.state_vector import zero as sv_zero
-from ..state_vector.type import num_qubits
 from ..state_vector.vector import vector
 from .mps_c import MPS_C
 from .svd import tensor_svd
@@ -9,7 +9,7 @@ from .type import is_mps
 
 def tensor_decomposition(v, nkeep=None, tol=1e-12):
     if is_mps(v):
-        return v.tensors
+        return [v._tensor(s) for s in range(num_qubits(v))]
     else:
         n = num_qubits(v)
         w = vector(v).reshape((1, 2**n))

@@ -3,11 +3,12 @@ from copy import deepcopy
 import numpy as np
 
 from ..mps.svd import tensor_svd
+from ..mps.type import MPS
 from ..operator import type as op
 from .projector import compact_projector
 
 
-class MPS_P:
+class MPS_P(MPS):
     """
     MPS representation of quantum pure state
 
@@ -31,7 +32,10 @@ class MPS_P:
         self.cp = [0, n - 1]
         # canonicalization matrices
         # put sentinels (1x1 identities) at t = 0 and t = n
-        self.cmat = [np.identity(1)] + [None] * (n - 1) + [np.identity(1)]
+        self.env = [np.identity(1)] + [None] * (n - 1) + [np.identity(1)]
+
+    def _tensor(self, t):
+        return self.tensors[t]
 
     def _canonicalize(self, p0, p1=None):
         p1 = p0 if p1 is None else p1
@@ -39,14 +43,14 @@ class MPS_P:
         assert 0 <= p0 and p0 <= p1 and p1 < n
         if self.cp[0] < p0:
             for t in range(self.cp[0], p0):
-                A = np.einsum(self.cmat[t], [0, 3], self.tensors[t], [3, 1, 2])
-                _, self.cmat[t + 1] = tensor_svd(A, [[0, 1], [2]], "left")
+                A = np.einsum(self.env[t], [0, 3], self.tensors[t], [3, 1, 2])
+                _, self.env[t + 1] = tensor_svd(A, [[0, 1], [2]], "left")
         self.cp[0] = p0
         self.cp[1] = max(p0, self.cp[1])
         if self.cp[1] > p1:
             for t in range(self.cp[1], p1, -1):
-                A = np.einsum(self.tensors[t], [0, 1, 3], self.cmat[t + 1], [3, 2])
-                self.cmat[t], _ = tensor_svd(A, [[0], [1, 2]], "right")
+                A = np.einsum(self.tensors[t], [0, 1, 3], self.env[t + 1], [3, 2])
+                self.env[t], _ = tensor_svd(A, [[0], [1, 2]], "right")
         self.cp[1] = p1
 
     def _is_canonical(self):
@@ -76,14 +80,14 @@ class MPS_P:
         for t in range(0, self.cp[0]):
             A = np.einsum(A, [0, 3], self.tensors[t], [3, 1, 2])
             A = np.einsum(A, [2, 3, 1], self.tensors[t].conj(), [2, 3, 0])
-            B = np.einsum(self.cmat[t + 1], [2, 1], self.cmat[t + 1].conj(), [2, 0])
+            B = np.einsum(self.env[t + 1], [2, 1], self.env[t + 1].conj(), [2, 0])
             assert A.shape == B.shape
             assert np.allclose(A, B)
         A = np.identity(1)
         for t in range(n - 1, self.cp[1], -1):
             A = np.einsum(self.tensors[t], [0, 1, 3], A, [3, 2])
             A = np.einsum(self.tensors[t].conj(), [1, 2, 3], A, [0, 2, 3])
-            B = np.einsum(self.cmat[t], [0, 2], self.cmat[t].conj(), [1, 2])
+            B = np.einsum(self.env[t], [0, 2], self.env[t].conj(), [1, 2])
             assert np.allclose(A, B)
         return True
 
@@ -107,8 +111,8 @@ class MPS_P:
         else:
             t0 = np.einsum(t0, [0, 4, 3], p1, [2, 1, 4])
             t1 = np.einsum(t1, [0, 4, 3], p0, [2, 4, 1])
-        tt0 = np.einsum(self.cmat[s], [0, 4], t0, [4, 1, 2, 3])
-        tt1 = np.einsum(t1, [0, 1, 2, 4], self.cmat[s + 2], [4, 3])
+        tt0 = np.einsum(self.env[s], [0, 4], t0, [4, 1, 2, 3])
+        tt1 = np.einsum(t1, [0, 1, 2, 4], self.env[s + 2], [4, 3])
         _, WLh, WR = compact_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], maxdim)
         self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
         self.tensors[s + 1] = np.einsum(WLh, [3, 4, 0], t1, [4, 3, 1, 2])

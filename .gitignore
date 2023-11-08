@@ -3,3 +3,6 @@ build
 **/*.py[cod]
 **/__pycache__
 **/*.egg-info
+**/test_mps_t-generator.pkl
+**/test_mps_t-graph.json
+**/test_mps_t-tensor.pkl
