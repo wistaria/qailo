@@ -19,17 +19,17 @@ def test_mps_t():
     print("probabitily:", q.probability(v))
 
     print("# tensor pool")
-    for id, tp in enumerate(v.tpool):
+    for id, tp in enumerate(v.tp.tpool):
         print(f"{id} {tp[0].shape} {tp[1]} {tp[2]}")
-    assert len(v.tpool) == 25
+    assert len(v.tp.tpool) == 25
 
     print("# generator pool")
-    for id, gp in enumerate(v.gpool):
+    for id, gp in enumerate(v.tp.gpool):
         print(f"{id} {gp[0].shape} {gp[1]} {gp[2].shape} {gp[3].shape}")
-    assert len(v.gpool) == 2
+    assert len(v.tp.gpool) == 2
 
     prefix = "test_mps_t"
-    v._dump(prefix)
+    v.tp._dump(prefix)
 
 
 if __name__ == "__main__":
