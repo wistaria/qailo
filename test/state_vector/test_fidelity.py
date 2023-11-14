@@ -11,4 +11,4 @@ def test_fidelity():
             sv1 = q.sv.apply(sv1, q.op.h(), [i])
         assert q.sv.fidelity(sv0, sv0) == approx(1)
         assert q.sv.fidelity(sv1, sv1) == approx(1)
-        assert q.sv.fidelity(sv0, sv1) == approx(1 / np.sqrt(2**n))
+        assert q.sv.fidelity(sv0, sv1) == approx(1 / 2**n)

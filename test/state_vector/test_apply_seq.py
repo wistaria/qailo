@@ -16,5 +16,5 @@ def test_apply_seq():
         assert q.sv.fidelity(v1, v1) == approx(1)
         assert q.sv.fidelity(v2, v2) == approx(1)
         assert q.sv.fidelity(v1, v2) == approx(1)
-        assert q.sv.fidelity(v0, v1) == approx(1 / np.sqrt(2**n))
-        assert q.sv.fidelity(v0, v2) == approx(1 / np.sqrt(2**n))
+        assert q.sv.fidelity(v0, v1) == approx(1 / 2**n)
+        assert q.sv.fidelity(v0, v2) == approx(1 / 2**n)
