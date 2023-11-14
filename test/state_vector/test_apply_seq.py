@@ -1,4 +1,3 @@
-import numpy as np
 import qailo as q
 from pytest import approx
 

@@ -1,4 +1,5 @@
 import qailo as q
+from qailo.mps_t.tpool import tpool
 
 
 def test_mps_t():
@@ -30,6 +31,9 @@ def test_mps_t():
 
     prefix = "test_mps_t"
     v.tp._dump(prefix)
+
+    tp = tpool()
+    tp._load(prefix)
 
 
 if __name__ == "__main__":

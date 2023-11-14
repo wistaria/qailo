@@ -72,8 +72,48 @@ class tpool:
             m["shape L"] = gp[2].shape
             m["shape R"] = gp[3].shape
             glist.append(m)
-            np.savez(f"{prefix}-generator-{id}", gp[0], gp[1], gp[2])
+            np.savez(f"{prefix}-generator-{id}", s=gp[0], wl=gp[1], wr=gp[2])
         dic["generator"] = glist
 
         with open(prefix + "-graph.json", mode="w") as f:
             json.dump(dic, f, indent=2)
+
+    def _load(self, prefix):
+        import json
+
+        with open(prefix + "-graph.json", mode="r") as f:
+            dic = json.load(f)
+            print(dic)
+            assert "prefix" in dic and dic["prefix"] == prefix
+
+            self.tpool = []
+            if "tensor" in dic:
+                for t in dic["tensor"]:
+                    id = t["id"]
+                    if t["type"] == "initial":
+                        self.tpool.append(
+                            [np.load(f"{prefix}-tensor-{id}.npy"), "initial", None]
+                        )
+                        assert list(self.tpool[-1][0].shape) == t["shape"]
+                    elif t["type"] == "product":
+                        if "subscripts" not in dic:
+                            t["subscripts"] = None
+                        self.tpool.append(
+                            [
+                                None,
+                                "product",
+                                t["from 0"],
+                                t["subscripts 0"],
+                                t["from 1"],
+                                t["subscripts 1"],
+                                t["subscripts"],
+                            ]
+                        )
+                    elif "squeezer L" in dic or "squeezer R" in dic:
+                        self.tpool.append([None, t["type"], t["from"]])
+            self.gpool = []
+            if "generator" in dic:
+                for g in dic["generator"]:
+                    id = g["id"]
+                    data = np.load(f"{prefix}-generator-{id}.npz")
+                    self.gpool.append([data["s"], g["dim to"], data["wl"], data["wr"]])
