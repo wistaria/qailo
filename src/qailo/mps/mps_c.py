@@ -30,6 +30,19 @@ class MPS_C(MPS):
         self.t2q = list(range(n))
         self.cp = [0, n - 1]
 
+    def _num_qubits(self):
+        return len(self.tensors)
+
+    def _state_vector(self):
+        n = self._num_qubits()
+        v = self._tensor(0)
+        for t in range(1, n):
+            ss0 = list(range(t + 1)) + [t + 3]
+            ss1 = [t + 3, t + 1, t + 2]
+            v = np.einsum(v, ss0, self._tensor(t), ss1)
+        v = v.reshape((2,) * n)
+        return np.einsum(v, self.t2q).reshape((2,) * n + (1,))
+
     def _tensor(self, t):
         return self.tensors[t]
 

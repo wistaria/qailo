@@ -45,5 +45,5 @@ def vector(v, c=None):
     if sv.is_state_vector(v):
         return sv.vector(v, c)
     elif mps.is_mps(v):
-        return sv.vector(mps.state_vector(v), c)
+        return sv.vector(v._state_vector(), c)
     assert False
