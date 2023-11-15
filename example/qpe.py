@@ -32,6 +32,6 @@ if __name__ == "__main__":
     v = q.apply(v, q.op.x())
     v = q.sv.product_state([q.sv.zero(n), v])
     v = qpe(n, u, v)
-    prob = q.sv.probability(v, list(range(n)))
+    prob = q.probability(v, list(range(n)))
     for i in range(len(prob)):
         print("{} {}".format(q.util.binary2str(n, i), prob[i]))
