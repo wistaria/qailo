@@ -52,7 +52,7 @@ def collect_legs(ss0, ss1):
     return legs0L, legs0R, legs1L, legs1R
 
 
-def compact_projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
+def projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
     ss0, ss1 = normalize_ss(ss0_in, ss1_in)
     legs0L, legs0R, legs1L, legs1R = collect_legs(ss0, ss1)
     dim0L = np.prod([T0.shape[i] for i in legs0L])
@@ -70,51 +70,3 @@ def compact_projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
     WL = np.einsum(TT0.conj(), [0] + ss_sum, U, [0, max(ss_sum) + 1])
     WR = np.einsum(TT1, [0] + ss_sum, V, [0, max(ss_sum) + 1])
     return S, WL.conj(), WR
-
-
-def _biorth(VL, VR):
-    assert len(VL.shape) == 2 and VL.shape == VR.shape and VL.shape[0] >= VL.shape[1]
-    r = VL.shape[1]
-    for i in range(r):
-        for j in range(i):
-            VL[:, i] = VL[:, i] - (VR[:, j].conj().T @ VL[:, i]) * VL[:, j]
-            VR[:, i] = VR[:, i] - (VL[:, j].conj().T @ VR[:, i]) * VR[:, j]
-        norm = VL[:, i].conj().T @ VR[:, i]
-        VL[:, i] = VL[:, i] / (norm.conj() / np.sqrt(np.abs(norm)))
-        VR[:, i] = VR[:, i] / np.sqrt(np.abs(norm))
-    return VL, VR
-
-
-def _full_projector(T0, ss0_in, T1, ss1_in, tol=1e-12):
-    """
-    Return:
-    S: singular values
-    d: number of non-zero singular values
-    WL, WR: full projector WL* @ WR = I
-    """
-    S, WLdh, WRd = compact_projector(T0, ss0_in, T1, ss1_in, tol=tol)
-    WLd = WLdh.conj()
-    d = S.shape[0]
-    assert d == WLd.shape[-1] and d == WRd.shape[-1]
-    dimsWL0 = WLd.shape[:-1]
-    dimsWR0 = WRd.shape[:-1]
-    m = np.prod(dimsWL0)
-    assert m == np.prod(dimsWR0)
-    if d < m:
-        WLd = WLd.reshape((m, d))
-        WRd = WRd.reshape((m, d))
-        P = np.identity(m) - WRd @ WLd.conj().T
-        VL = np.random.rand(m, m - d)
-        VR = np.random.rand(m, m - d)
-        VL = P.conj().T @ VL
-        VR = P @ VR
-        VL, VR = _biorth(VL, VR)
-        S = np.block([S, np.zeros(m - d)])
-        WL = np.block([WLd, VL])
-        WR = np.block([WRd, VR])
-        assert S.shape == (m,) and WL.shape == (m, m) and WR.shape == (m, m)
-        WL = WL.reshape(dimsWL0 + (m,))
-        WR = WR.reshape(dimsWR0 + (m,))
-        return S, d, WL.conj(), WR
-    else:
-        return S, d, WLd.conj(), WRd

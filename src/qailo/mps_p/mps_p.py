@@ -5,7 +5,7 @@ import numpy as np
 from ..mps.svd import tensor_svd
 from ..mps.type import MPS
 from ..operator import type as op
-from .projector import compact_projector
+from .projector import projector
 
 
 class MPS_P(MPS):
@@ -126,6 +126,6 @@ class MPS_P(MPS):
             t1 = np.einsum(t1, [0, 4, 3], p0, [2, 4, 1])
         tt0 = np.einsum(self.env[s], [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], self.env[s + 2], [4, 3])
-        _, WLh, WR = compact_projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], maxdim)
+        _, WLh, WR = projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], maxdim)
         self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
         self.tensors[s + 1] = np.einsum(WLh, [3, 4, 0], t1, [4, 3, 1, 2])
