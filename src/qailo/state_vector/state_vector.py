@@ -23,7 +23,7 @@ def product_state(states):
 def zero(n=1):
     assert n > 0
     if n == 1:
-        return np.array((1, 0)).reshape((2, 1))
+        return np.array((1.0, 0.0)).reshape((2, 1))
     else:
         return product_state([zero(1)] * n)
 
@@ -31,6 +31,6 @@ def zero(n=1):
 def one(n=1):
     assert n > 0
     if n == 1:
-        return np.array((0, 1)).reshape((2, 1))
+        return np.array((0.0, 1.0)).reshape((2, 1))
     else:
         return product_state([one(1)] * n)
