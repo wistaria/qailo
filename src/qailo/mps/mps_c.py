@@ -22,9 +22,10 @@ class MPS_C(MPS):
         tensors [cp(1)+1...n-1]: right canonical
     """
 
-    def __init__(self, tensors):
+    def __init__(self, tensors, nkeep=None):
         assert isinstance(tensors, list)
         self.tensors = deepcopy(tensors)
+        self.nkeep = nkeep
         n = len(self.tensors)
         self.q2t = list(range(n))
         self.t2q = list(range(n))
@@ -108,7 +109,7 @@ class MPS_C(MPS):
         self.cp[0] = min(self.cp[0], s)
         self.cp[1] = max(self.cp[1], s)
 
-    def _apply_two(self, p, s, maxdim=None, reverse=False):
+    def _apply_two(self, p, s, reverse=False):
         """
         apply 2-qubit operator on neighboring tensors at s and s+1
         """
@@ -121,6 +122,6 @@ class MPS_C(MPS):
             t = np.einsum(t, [0, 4, 5, 3], p, [1, 2, 4, 5])
         else:
             t = np.einsum(t, [0, 4, 5, 3], p, [2, 1, 5, 4])
-        L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=maxdim)
+        L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=self.nkeep)
         self.tensors[s] = L
         self.tensors[s + 1] = R

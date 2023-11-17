@@ -3,21 +3,21 @@ from . import operator as op
 from . import state_vector as sv
 
 
-def apply(v, p, pos=None, maxdim=None):
+def apply(v, p, pos=None):
     if sv.is_state_vector(v):
         v = sv.apply(v, p, pos)
     elif mps.is_mps(v):
-        v = mps.apply(v, p, pos, maxdim)
+        v = mps.apply(v, p, pos)
     else:
         assert False
     return v
 
 
-def apply_seq(v, seq, maxdim=None):
+def apply_seq(v, seq):
     if sv.is_state_vector(v):
         v = sv.apply_seq(v, seq)
     elif mps.is_mps(v):
-        v = mps.apply_seq(v, seq, maxdim)
+        v = mps.apply_seq(v, seq)
     else:
         assert False
     return v

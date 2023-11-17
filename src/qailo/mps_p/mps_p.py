@@ -23,9 +23,10 @@ class MPS_P(MPS):
         tensors [cp(1)+1...n-1]: bottom canonical
     """
 
-    def __init__(self, tensors):
+    def __init__(self, tensors, nkeep=None):
         assert isinstance(tensors, list)
         self.tensors = deepcopy(tensors)
+        self.nkeep = nkeep
         n = len(self.tensors)
         self.q2t = list(range(n))
         self.t2q = list(range(n))
@@ -110,7 +111,7 @@ class MPS_P(MPS):
         self.cp[0] = min(self.cp[0], s)
         self.cp[1] = max(self.cp[1], s)
 
-    def _apply_two(self, p, s, maxdim=None, reverse=False):
+    def _apply_two(self, p, s, reverse=False):
         """
         apply 2-qubit operator on neighboring tensors, s and s+1
         """
@@ -126,6 +127,6 @@ class MPS_P(MPS):
             t1 = np.einsum(t1, [0, 4, 3], p0, [2, 4, 1])
         tt0 = np.einsum(self.env[s], [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], self.env[s + 2], [4, 3])
-        _, WLh, WR = projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], maxdim)
+        _, WLh, WR = projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3], nkeep=self.nkeep)
         self.tensors[s] = np.einsum(t0, [0, 1, 3, 4], WR, [3, 4, 2])
         self.tensors[s + 1] = np.einsum(WLh, [3, 4, 0], t1, [4, 3, 1, 2])

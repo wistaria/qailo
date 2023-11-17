@@ -23,16 +23,16 @@ def tensor_decomposition(v, nkeep=None, tol=1e-12):
         return tensors
 
 
-def product_state(states, mps=MPS_C):
+def product_state(states, nkeep=None, mps=MPS_C):
     tensors = []
     for s in states:
-        tensors = tensors + tensor_decomposition(s)
-    return mps(tensors)
+        tensors = tensors + tensor_decomposition(s, nkeep)
+    return mps(tensors, nkeep)
 
 
-def zero(n=1, mps=MPS_C):
-    return product_state([sv_zero()] * n, mps)
+def zero(n=1, nkeep=None, mps=MPS_C):
+    return product_state([sv_zero()] * n, nkeep, mps)
 
 
-def one(n=1, mps=MPS_C):
-    return product_state([sv_one()] * n, mps)
+def one(n=1, nkeep=None, mps=MPS_C):
+    return product_state([sv_one()] * n, nkeep, mps)
