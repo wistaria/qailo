@@ -19,10 +19,10 @@ def test_apply():
     p = 64
     nkeep = 2
 
-    m0 = q.mps.zero(n, mps=q.mps.MPS_C)
-    m1 = q.mps.zero(n, mps=q.mps_p.MPS_P)
-    m2 = q.mps.zero(n, nkeep=nkeep, mps=q.mps.MPS_C)
-    m3 = q.mps.zero(n, nkeep=nkeep, mps=q.mps_p.MPS_P)
+    m0 = q.mps.zero(n, mps=q.mps.canonical_mps)
+    m1 = q.mps.zero(n, mps=q.mps.projector_mps)
+    m2 = q.mps.zero(n, nkeep=nkeep, mps=q.mps.canonical_mps)
+    m3 = q.mps.zero(n, nkeep=nkeep, mps=q.mps.projector_mps)
     v = q.sv.zero(n)
     seq = []
 
@@ -77,7 +77,7 @@ def test_apply():
     assert f0 == approx(1)
     assert f1 == approx(1)
 
-    m4 = q.mps.zero(n, mps=q.mps_p.MPS_P)
+    m4 = q.mps.zero(n, mps=q.mps.projector_mps)
     f4 = q.sv.fidelity(q.mps.state_vector(q.mps.apply_seq(m4, seq)), v)
     assert f4 == approx(1)
 

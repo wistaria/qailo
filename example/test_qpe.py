@@ -25,9 +25,9 @@ def test_qpe():
     assert prob[4] == approx(1)
     assert prob[0] == approx(0)
 
-    v = q.mps_p.zero(1)
+    v = q.mps.zero(1, mps=q.mps.projector_mps)
     v = q.apply(v, q.op.x())
-    v = q.mps_p.product_state([q.mps.zero(n), v])
+    v = q.mps.product_state([q.mps.zero(n, mps=q.mps.projector_mps), v])
     v = qpe(n, u, v)
     prob = q.probability(v, list(range(n)))
     assert prob[4] == approx(1)

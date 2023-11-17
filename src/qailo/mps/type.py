@@ -1,4 +1,4 @@
-class MPS(object):
+class mps(object):
     def __init__(self):
         True
 
@@ -8,7 +8,7 @@ def is_canonical(m):
 
 
 def is_mps(m):
-    return isinstance(m, MPS)
+    return isinstance(m, mps)
 
 
 def num_qubits(m):

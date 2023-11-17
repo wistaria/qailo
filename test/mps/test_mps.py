@@ -6,7 +6,7 @@ def test_mps():
     states = [q.sv.one(), q.sv.one(), q.sv.zero(), q.sv.zero()]
     v = q.sv.product_state(states)
     m0 = q.mps.product_state(states)
-    m1 = q.mps_p.product_state(states)
+    m1 = q.mps.product_state(states, mps=q.mps.projector_mps)
     v0 = q.mps.state_vector(m0)
     v1 = q.mps.state_vector(m1)
     assert np.allclose(v0, v)

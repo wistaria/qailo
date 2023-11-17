@@ -17,7 +17,7 @@ def test_grover():
     assert prob[0] == approx(0.581704139709473)
     assert prob[1] == approx(0.027886390686035)
 
-    v = q.mps_p.zero(n)
+    v = q.mps.zero(n, mps=q.mps.projector_mps)
     prob = q.probability(grover(v, target, iter))
     assert prob[0] == approx(0.581704139709473)
     assert prob[1] == approx(0.027886390686035)

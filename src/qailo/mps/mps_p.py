@@ -3,12 +3,12 @@ from copy import deepcopy
 import numpy as np
 
 from ..mps.svd import tensor_svd
-from ..mps.type import MPS
+from ..mps.type import mps
 from ..operator import type as op
 from .projector import projector
 
 
-class MPS_P(MPS):
+class projector_mps(mps):
     """
     MPS representation of quantum pure state
 

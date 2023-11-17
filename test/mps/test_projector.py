@@ -1,5 +1,6 @@
 import numpy as np
 import qailo as q
+from qailo.mps.svd import compact_svd, tensor_svd
 
 
 def test_projector():
@@ -9,12 +10,12 @@ def test_projector():
         n0, n1, n2, d = np.random.randint(2, maxn, size=(4,))
         T0 = np.random.random((n0, n1))
         T1 = np.random.random((n1, n2))
-        _, WLh, WR = q.mps_p.projector(T0, [0, 2], T1, [2, 1], nkeep=d)
+        _, WLh, WR = q.mps.projector(T0, [0, 2], T1, [2, 1], nkeep=d)
         assert WLh.shape[1] <= d and WR.shape[1] <= d
         assert WLh.shape[0] == n1 and WR.shape[0] == n1
         A = np.einsum(T0, [0, 2], WR, [2, 3], WLh.T, [3, 4], T1, [4, 1])
 
-        S, U, V = q.mps.compact_svd(np.einsum(T0, [0, 2], T1, [2, 1]), nkeep=d)
+        S, U, V = compact_svd(np.einsum(T0, [0, 2], T1, [2, 1]), nkeep=d)
         B = np.einsum("k,ik,jk->ij", S, U, V)
         assert np.allclose(A, B)
 
@@ -22,13 +23,13 @@ def test_projector():
         n0, n1, n2, n3, n4, n5, d = np.random.randint(2, maxn, size=(7,))
         T0 = np.random.random((n0, n1, n2, n3))
         T1 = np.random.random((n3, n2, n4, n5))
-        _, WLh, WR = q.mps_p.projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
+        _, WLh, WR = q.mps.projector(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3], nkeep=d)
         assert WLh.shape[2] <= d and WR.shape[2] <= d
         assert WLh.shape[0] == n2 and WLh.shape[1] == n3
         assert WR.shape[0] == n2 and WR.shape[1] == n3
         A = np.einsum(T0, [0, 1, 4, 5], WR, [4, 5, 6], WLh, [7, 8, 6], T1, [8, 7, 2, 3])
 
-        L, R = q.mps.tensor_svd(
+        L, R = tensor_svd(
             np.einsum(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3]), [[0, 1], [2, 3]], nkeep=d
         )
         B = np.einsum(L, [0, 1, 4], R, [4, 2, 3])
@@ -48,7 +49,7 @@ def test_projector():
         assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [5, 4, 2, 3]), B)
         tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
-        _, WLh, WR = q.mps_p.projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
+        _, WLh, WR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
         assert np.allclose(
             np.einsum(WLh, [2, 3, 0], WR, [2, 3, 1]), np.identity(WLh.shape[2])
         )
@@ -72,7 +73,7 @@ def test_projector():
         assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [4, 5, 2, 3]), B)
         tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
         tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
-        _, WLh, WR = q.mps_p.projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
+        _, WLh, WR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
         assert np.allclose(
             np.einsum(WLh, [2, 3, 0], WR, [2, 3, 1]), np.identity(WLh.shape[2])
         )

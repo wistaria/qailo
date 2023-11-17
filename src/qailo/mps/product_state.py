@@ -2,7 +2,7 @@ from ..dispatch import num_qubits
 from ..state_vector.state_vector import one as sv_one
 from ..state_vector.state_vector import zero as sv_zero
 from ..state_vector.vector import vector
-from .mps_c import MPS_C
+from .mps_c import canonical_mps
 from .svd import tensor_svd
 from .type import is_mps
 
@@ -23,16 +23,16 @@ def tensor_decomposition(v, nkeep=None, tol=1e-12):
         return tensors
 
 
-def product_state(states, nkeep=None, mps=MPS_C):
+def product_state(states, nkeep=None, mps=canonical_mps):
     tensors = []
     for s in states:
         tensors = tensors + tensor_decomposition(s, nkeep)
     return mps(tensors, nkeep)
 
 
-def zero(n=1, nkeep=None, mps=MPS_C):
+def zero(n=1, nkeep=None, mps=canonical_mps):
     return product_state([sv_zero()] * n, nkeep, mps)
 
 
-def one(n=1, nkeep=None, mps=MPS_C):
+def one(n=1, nkeep=None, mps=canonical_mps):
     return product_state([sv_one()] * n, nkeep, mps)

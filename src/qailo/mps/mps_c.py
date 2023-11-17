@@ -4,10 +4,10 @@ import numpy as np
 
 from ..operator import type as op
 from .svd import tensor_svd
-from .type import MPS
+from .type import mps
 
 
-class MPS_C(MPS):
+class canonical_mps(mps):
     """
     MPS representation of quantum pure state
 

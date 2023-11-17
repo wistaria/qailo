@@ -14,7 +14,7 @@ def test_simple():
     assert np.allclose(q.vector(v, [0, 0, 0]), 1 / np.sqrt(2))
     assert np.allclose(q.vector(v, [1, 1, 1]), 1 / np.sqrt(2))
 
-    v = q.mps_p.zero(3)
+    v = q.mps.zero(3, mps=q.mps.projector_mps)
     v = simple.main(v)
     assert np.allclose(q.vector(v, [0, 0, 0]), 1 / np.sqrt(2))
     assert np.allclose(q.vector(v, [1, 1, 1]), 1 / np.sqrt(2))
