@@ -1,3 +1,5 @@
+import numpy as np
+
 from . import mps
 from . import operator as op
 from . import state_vector as sv
@@ -21,6 +23,13 @@ def apply_seq(v, seq):
     else:
         assert False
     return v
+
+
+def norm(v):
+    if sv.is_state_vector(v):
+        return np.linalg.norm(v)
+    elif mps.is_mps(v):
+        return v._norm()
 
 
 def num_qubits(v):

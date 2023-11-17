@@ -1,7 +1,6 @@
 from .apply import apply, apply_seq
 from .mps_c import canonical_mps
 from .mps_p import projector_mps
-from .norm import norm
 from .product_state import one, product_state, tensor_decomposition, zero
 from .projector import projector
 from .state_vector import state_vector
@@ -12,7 +11,6 @@ __all__ = [
     apply_seq,
     canonical_mps,
     projector_mps,
-    norm,
     one,
     product_state,
     tensor_decomposition,

@@ -19,7 +19,7 @@ def test_swap():
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
         q.mps.is_canonical(m)
-        norm = q.mps.norm(m)
+        norm = q.norm(m)
         v = q.sv.vector(q.mps.state_vector(m))
         for _ in range(64):
             s = np.random.randint(n - 1)
@@ -28,7 +28,7 @@ def test_swap():
             _swap_tensors(m, s)
             print(q.sv.vector(q.mps.state_vector(m)))
             q.mps.is_canonical(m)
-            assert q.mps.norm(m) == approx(norm)
+            assert q.norm(m) == approx(norm)
 
         vn = q.sv.vector(q.mps.state_vector(m))
         assert len(v) == len(vn)
@@ -51,7 +51,7 @@ def test_move():
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
         q.mps.is_canonical(m)
-        norm = q.mps.norm(m)
+        norm = q.norm(m)
         v = q.sv.vector(q.mps.state_vector(m))
 
         for _ in range(16):
@@ -62,7 +62,7 @@ def test_move():
             _move_qubit(m, p, s)
             print(q.sv.vector(q.mps.state_vector(m)))
             q.mps.is_canonical(m)
-            assert q.mps.norm(m) == approx(norm)
+            assert q.norm(m) == approx(norm)
 
         vn = q.sv.vector(q.mps.state_vector(m))
         assert len(v) == len(vn)

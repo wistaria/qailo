@@ -16,21 +16,21 @@ def test_canonical():
     tensors.append(np.random.random((d, 2, 1)))
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
-        norm = q.mps.norm(m)
-        assert q.mps.norm(m) == approx(norm)
+        norm = q.norm(m)
+        assert q.norm(m) == approx(norm)
         assert q.mps.is_canonical(m)
 
         for _ in range(n):
             p = np.random.randint(n)
             m._canonicalize(p)
-            assert q.mps.norm(m) == approx(norm)
+            assert q.norm(m) == approx(norm)
             assert q.mps.is_canonical(m)
             assert q.mps.is_canonical(m)
 
         for _ in range(n):
             p = np.random.randint(n - 1)
             m._canonicalize(p, p + 1)
-            assert q.mps.norm(m) == approx(norm)
+            assert q.norm(m) == approx(norm)
             assert q.mps.is_canonical(m)
 
     v = np.random.random(2**n).reshape((2,) * n + (1,))
@@ -38,18 +38,18 @@ def test_canonical():
     tensors = q.mps.tensor_decomposition(v, maxdim)
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
-        norm = q.mps.norm(m)
+        norm = q.norm(m)
 
         for _ in range(n):
             p = np.random.randint(n)
             m._canonicalize(p)
-            assert q.mps.norm(m) == approx(norm)
+            assert q.norm(m) == approx(norm)
             assert q.mps.is_canonical(m)
 
         for _ in range(n):
             p = np.random.randint(n - 1)
             m._canonicalize(p, p + 1)
-            assert q.mps.norm(m) == approx(norm)
+            assert q.norm(m) == approx(norm)
             assert q.mps.is_canonical(m)
 
 

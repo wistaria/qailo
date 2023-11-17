@@ -38,6 +38,13 @@ class projector_mps(mps):
     def _num_qubits(self):
         return len(self.tensors)
 
+    def _norm(self):
+        A = np.identity(1)
+        for t in range(self._num_qubits()):
+            A = np.einsum("ij,jkl->ikl", A, self._tensor(t))
+            A = np.einsum("ijk,ijl->kl", A, self._tensor(t).conj())
+        return np.sqrt(np.trace(A))
+
     def _state_vector(self):
         n = self._num_qubits()
         v = self._tensor(0)
