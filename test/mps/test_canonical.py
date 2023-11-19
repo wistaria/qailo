@@ -5,12 +5,12 @@ from pytest import approx
 
 def test_canonical():
     n = 16
-    maxdim = 4
+    nkeep = 4
     tensors = []
-    d = np.random.randint(2, maxdim)
+    d = np.random.randint(2, nkeep)
     tensors.append(np.random.random((1, 2, d)))
     for _ in range(n - 2):
-        dn = np.random.randint(2, maxdim)
+        dn = np.random.randint(2, nkeep)
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
@@ -35,7 +35,7 @@ def test_canonical():
 
     v = np.random.random(2**n).reshape((2,) * n + (1,))
     v /= np.linalg.norm(v)
-    tensors = q.mps.tensor_decomposition(v, maxdim)
+    tensors = q.mps.tensor_decomposition(v, nkeep)
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
         norm = q.norm(m)

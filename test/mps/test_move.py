@@ -7,12 +7,12 @@ from qailo.mps.apply import _move_qubit, _swap_tensors
 def test_swap():
     np.random.seed(1234)
     n = 12
-    maxdim = 4
+    nkeep = 4
     tensors = []
-    d = np.random.randint(2, maxdim)
+    d = np.random.randint(2, nkeep)
     tensors.append(np.random.random((1, 2, d)))
     for _ in range(n - 2):
-        dn = np.random.randint(2, maxdim)
+        dn = np.random.randint(2, nkeep)
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))
@@ -39,12 +39,12 @@ def test_move():
     np.random.seed(1234)
     # n = 12
     n = 4
-    maxdim = 4
+    nkeep = 4
     tensors = []
-    d = np.random.randint(2, maxdim)
+    d = np.random.randint(2, nkeep)
     tensors.append(np.random.random((1, 2, d)))
     for _ in range(n - 2):
-        dn = np.random.randint(2, maxdim)
+        dn = np.random.randint(2, nkeep)
         tensors.append(np.random.random((d, 2, dn)))
         d = dn
     tensors.append(np.random.random((d, 2, 1)))

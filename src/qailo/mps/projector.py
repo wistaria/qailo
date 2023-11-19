@@ -67,6 +67,6 @@ def projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
     S, U, V = compact_svd(A, nkeep=nkeep, tol=tol)
     U = np.einsum(U, [0, 1], np.sqrt(1 / S), [1], [0, 1])
     V = np.einsum(V, [0, 1], np.sqrt(1 / S), [1], [0, 1])
-    WL = np.einsum(TT0.conj(), [0] + ss_sum, U, [0, max(ss_sum) + 1])
-    WR = np.einsum(TT1, [0] + ss_sum, V, [0, max(ss_sum) + 1])
-    return S, WL.conj(), WR
+    PL = np.einsum(TT0.conj(), [0] + ss_sum, U, [0, max(ss_sum) + 1])
+    PR = np.einsum(TT1, [0] + ss_sum, V, [0, max(ss_sum) + 1])
+    return S, PL.conj(), PR
