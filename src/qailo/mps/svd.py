@@ -11,14 +11,14 @@ def compact_svd(A, nkeep=None, tol=1e-12):
 
 
 def tensor_svd(T, partition, canonical="center", nkeep=None, tol=1e-12):
-    legs0 = len(partition[0])
-    legs1 = len(partition[1])
-    assert len(T.shape) == legs0 + legs1
+    legsL = len(partition[0])
+    legsR = len(partition[1])
+    assert len(T.shape) == legsL + legsR
     assert sorted(partition[0] + partition[1]) == list(range(len(T.shape)))
-    dims0 = [T.shape[i] for i in partition[0]]
-    dims1 = [T.shape[i] for i in partition[1]]
+    dimsL = [T.shape[i] for i in partition[0]]
+    dimsR = [T.shape[i] for i in partition[1]]
     m = np.einsum(T, partition[0] + partition[1]).reshape(
-        np.prod(dims0), np.prod(dims1)
+        np.prod(dimsL), np.prod(dimsR)
     )
     S, U, V = compact_svd(m, nkeep=nkeep, tol=tol)
     L = U
@@ -32,6 +32,6 @@ def tensor_svd(T, partition, canonical="center", nkeep=None, tol=1e-12):
         L = np.einsum("ij,j->ij", L, S)
     else:
         raise ValueError
-    L = L.reshape(dims0 + [S.shape[0]])
-    R = R.reshape([S.shape[0]] + dims1)
+    L = L.reshape(dimsL + [S.shape[0]])
+    R = R.reshape([S.shape[0]] + dimsR)
     return L, R

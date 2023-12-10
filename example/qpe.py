@@ -26,7 +26,7 @@ def qpe(n, u, v):
 
 if __name__ == "__main__":
     n = 3
-    phi = 2 * np.pi * (1 / 3)
+    phi = 2 * np.pi * 0.7
     u = q.op.p(phi)
     v = q.sv.zero()
     v = q.apply(v, q.op.x())
