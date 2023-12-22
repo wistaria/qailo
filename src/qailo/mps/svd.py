@@ -2,7 +2,7 @@ import numpy as np
 
 
 def compact_svd(A, nkeep=None, tol=1e-12):
-    assert len(A.shape) == 2
+    assert A.ndim == 2
     U, S, Vh = np.linalg.svd(A, full_matrices=False)
     V = Vh.conj().T
     dimS = sum([1 if x > tol * S[0] else 0 for x in S])
@@ -13,8 +13,8 @@ def compact_svd(A, nkeep=None, tol=1e-12):
 def tensor_svd(T, partition, canonical="center", nkeep=None, tol=1e-12):
     legsL = len(partition[0])
     legsR = len(partition[1])
-    assert len(T.shape) == legsL + legsR
-    assert sorted(partition[0] + partition[1]) == list(range(len(T.shape)))
+    assert T.ndim == legsL + legsR
+    assert sorted(partition[0] + partition[1]) == list(range(T.ndim))
     dimsL = [T.shape[i] for i in partition[0]]
     dimsR = [T.shape[i] for i in partition[1]]
     m = np.einsum(T, partition[0] + partition[1]).reshape(

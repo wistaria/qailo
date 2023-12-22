@@ -9,4 +9,4 @@ def is_state_vector(v):
 
 
 def num_qubits(v):
-    return len(v.shape) - 1
+    return v.ndim - 1
