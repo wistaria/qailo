@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
@@ -30,3 +30,8 @@ def num_qubits(v: npt.NDArray) -> int:
     elif is_operator(v):
         return v.ndim // 2
     raise ValueError
+
+
+class OPAutomaton(NamedTuple):
+    op: npt.NDArray
+    pos: list[int]
