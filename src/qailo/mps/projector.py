@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import numpy as np
+import numpy.typing as npt
 
 from ..mps.svd import compact_svd
+from ..typeutil import eincheck as ec
 
 
-def normalize_ss(ss0, ss1):
+def normalize_ss(ss0: list[int], ss1: list[int]) -> tuple[list[int], list[int]]:
     """
     Order the subscripts that are not contracted from 0.
     Subscripts that will be contracted are assigned a larger value.
@@ -28,17 +32,19 @@ def normalize_ss(ss0, ss1):
     return ss0_out, ss1_out
 
 
-def collect_legs(ss0, ss1):
+def collect_legs(
+    ss0: list[int], ss1: list[int]
+) -> tuple[list[int], list[int], list[int], list[int]]:
     """
     legs0L: list of legs in T0 that are NOT contracted
     legs0R: list of legs in T0 that will be contracted
     legs1L: list of legs in T1 that will be contracted
     legs1R: list of legs in T1 that are NOT contracted
     """
-    legs0L = []
-    legs0R = []
-    legs1L = []
-    legs1R = []
+    legs0L: list[int] = []
+    legs0R: list[int] = []
+    legs1L: list[int] = []
+    legs1R: list[int] = []
     for k in range(len(ss0)):
         if ss0[k] not in ss1:
             legs0L.append(k)
@@ -52,7 +58,14 @@ def collect_legs(ss0, ss1):
     return legs0L, legs0R, legs1L, legs1R
 
 
-def projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
+def projector(
+    T0: npt.NDArray,
+    ss0_in: list[int],
+    T1: npt.NDArray,
+    ss1_in: list[int],
+    nkeep: int | None = None,
+    tol: float = 1e-12,
+) -> tuple[npt.NDArray, npt.NDArray, npt.NDArray]:
     ss0, ss1 = normalize_ss(ss0_in, ss1_in)
     legs0L, legs0R, legs1L, legs1R = collect_legs(ss0, ss1)
     dim0L = np.prod([T0.shape[i] for i in legs0L])
@@ -60,13 +73,13 @@ def projector(T0, ss0_in, T1, ss1_in, nkeep=None, tol=1e-12):
     dims1L = [T1.shape[i] for i in legs1L]
     dim1R = np.prod([T1.shape[i] for i in legs1R])
     assert len(dims0R) == len(dims1L)
-    TT0 = np.einsum(T0, ss0).reshape([dim0L] + dims0R)
-    TT1 = np.einsum(T1, ss1).reshape([dim1R] + dims0R)
+    TT0 = ec.einsum_cast(T0, ss0).reshape([dim0L] + dims0R)
+    TT1 = ec.einsum_cast(T1, ss1).reshape([dim1R] + dims0R)
     ss_sum = list(range(2, len(dims0R) + 2))
-    A = np.einsum(TT0, [0] + ss_sum, TT1, [1] + ss_sum)
+    A = ec.einsum_cast(TT0, [0] + ss_sum, TT1, [1] + ss_sum)
     S, U, V = compact_svd(A, nkeep=nkeep, tol=tol)
-    U = np.einsum(U, [0, 1], np.sqrt(1 / S), [1], [0, 1])
-    V = np.einsum(V, [0, 1], np.sqrt(1 / S), [1], [0, 1])
-    PL = np.einsum(TT0.conj(), [0] + ss_sum, U, [0, max(ss_sum) + 1])
-    PR = np.einsum(TT1, [0] + ss_sum, V, [0, max(ss_sum) + 1])
+    U = ec.einsum_cast(U, [0, 1], np.sqrt(1 / S), [1], [0, 1])
+    V = ec.einsum_cast(V, [0, 1], np.sqrt(1 / S), [1], [0, 1])
+    PL = ec.einsum_cast(TT0.conj(), [0] + ss_sum, U, [0, max(ss_sum) + 1])
+    PR = ec.einsum_cast(TT1, [0] + ss_sum, V, [0, max(ss_sum) + 1])
     return S, PL.conj(), PR
