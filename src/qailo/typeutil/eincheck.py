@@ -9,6 +9,10 @@ import numpy.typing as npt
 
 
 @overload
+def einsum(ss: str, *op: npt.NDArray) -> npt.ArrayLike: ...
+
+
+@overload
 def einsum(op1: np.ndarray, ss1: list[int]) -> npt.ArrayLike: ...
 
 
@@ -37,6 +41,10 @@ def einsum(
 
 def einsum(*args, **kwargs):
     return np.einsum(*args, **kwargs)
+
+
+@overload
+def einsum_cast(ss: str, *op: npt.NDArray) -> npt.NDArray: ...
 
 
 @overload
