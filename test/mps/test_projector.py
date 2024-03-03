@@ -1,6 +1,20 @@
+from __future__ import annotations
+
 import numpy as np
+import numpy.typing as npt
 import qailo as q
 from qailo.mps.svd import LegPartition, compact_svd, tensor_svd
+
+
+def checked_einsum(*args: npt.NDArray | list[int]) -> npt.NDArray:
+    for i, arg in enumerate(args):
+        if i % 2 == 0:
+            assert isinstance(arg, np.ndarray)
+        else:
+            assert isinstance(arg, list)
+    ret = np.einsum(*args)
+    assert isinstance(ret, np.ndarray)
+    return ret
 
 
 def test_projector():
@@ -13,10 +27,11 @@ def test_projector():
         _, PLh, PR = q.mps.projector(T0, [0, 2], T1, [2, 1], nkeep=d)
         assert PLh.shape[1] <= d and PR.shape[1] <= d
         assert PLh.shape[0] == n1 and PR.shape[0] == n1
-        A = np.einsum(T0, [0, 2], PR, [2, 3], PLh.T, [3, 4], T1, [4, 1])
+        A = checked_einsum(T0, [0, 2], PR, [2, 3], PLh.T, [3, 4], T1, [4, 1])
 
-        S, U, V = compact_svd(np.einsum(T0, [0, 2], T1, [2, 1]), nkeep=d)
+        S, U, V = compact_svd(checked_einsum(T0, [0, 2], T1, [2, 1]), nkeep=d)
         B = np.einsum("k,ik,jk->ij", S, U, V)
+        assert isinstance(B, np.ndarray)
         assert np.allclose(A, B)
 
     for _ in range(nt):
@@ -27,14 +42,16 @@ def test_projector():
         assert PLh.shape[2] <= d and PR.shape[2] <= d
         assert PLh.shape[0] == n2 and PLh.shape[1] == n3
         assert PR.shape[0] == n2 and PR.shape[1] == n3
-        A = np.einsum(T0, [0, 1, 4, 5], PR, [4, 5, 6], PLh, [7, 8, 6], T1, [8, 7, 2, 3])
+        A = checked_einsum(
+            T0, [0, 1, 4, 5], PR, [4, 5, 6], PLh, [7, 8, 6], T1, [8, 7, 2, 3]
+        )
 
         L, R = tensor_svd(
-            np.einsum(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3]),
+            checked_einsum(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3]),
             LegPartition([0, 1], [2, 3]),
             nkeep=d,
         )
-        B = np.einsum(L, [0, 1, 4], R, [4, 2, 3])
+        B = checked_einsum(L, [0, 1, 4], R, [4, 2, 3])
         assert np.allclose(A, B)
 
     for _ in range(nt):
@@ -43,21 +60,21 @@ def test_projector():
         t1 = np.random.random((3, 2, 2)) + 1.0j * np.random.random((3, 2, 2))
         w2 = np.random.random((2, 2)) + 1.0j * np.random.random((2, 2))
         p = np.random.random((2, 2, 2, 2)) + 1.0j * np.random.random((2, 2, 2, 2))
-        B = np.einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
+        B = checked_einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
         p0, p1 = tensor_svd(p, LegPartition([0, 2], [1, 3]))
-        assert np.allclose(np.einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
-        t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
-        t1 = np.einsum(t1, [0, 4, 3], p1, [1, 2, 4])
-        assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [5, 4, 2, 3]), B)
-        tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
-        tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
+        assert np.allclose(checked_einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
+        t0 = checked_einsum(t0, [0, 4, 3], p0, [1, 4, 2])
+        t1 = checked_einsum(t1, [0, 4, 3], p1, [1, 2, 4])
+        assert np.allclose(checked_einsum(t0, [0, 1, 4, 5], t1, [5, 4, 2, 3]), B)
+        tt0 = checked_einsum(w0, [0, 4], t0, [4, 1, 2, 3])
+        tt1 = checked_einsum(t1, [0, 1, 2, 4], w2, [4, 3])
         _, PLh, PR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [5, 4, 2, 3])
         assert np.allclose(
-            np.einsum(PLh, [2, 3, 0], PR, [2, 3, 1]), np.identity(PLh.shape[2])
+            checked_einsum(PLh, [2, 3, 0], PR, [2, 3, 1]), np.identity(PLh.shape[2])
         )
-        tt0 = np.einsum(t0, [0, 1, 3, 4], PR, [3, 4, 2])
-        tt1 = np.einsum(PLh, [3, 4, 0], t1, [4, 3, 1, 2])
-        A = np.einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
+        tt0 = checked_einsum(t0, [0, 1, 3, 4], PR, [3, 4, 2])
+        tt1 = checked_einsum(PLh, [3, 4, 0], t1, [4, 3, 1, 2])
+        A = checked_einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
         print(np.linalg.norm(A - B))
         assert np.allclose(A, B)
 
@@ -67,21 +84,21 @@ def test_projector():
         t1 = np.random.random((3, 2, 2)) + 1.0j * np.random.random((3, 2, 2))
         w2 = np.random.random((2, 2)) + 1.0j * np.random.random((2, 2))
         p = np.random.random((2, 2, 2, 2)) + 1.0j * np.random.random((2, 2, 2, 2))
-        B = np.einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
+        B = checked_einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
         p0, p1 = tensor_svd(p, LegPartition([0, 2], [1, 3]))
-        assert np.allclose(np.einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
-        t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
-        t1 = np.einsum(t1, [1, 4, 3], p1, [0, 2, 4])
-        assert np.allclose(np.einsum(t0, [0, 1, 4, 5], t1, [4, 5, 2, 3]), B)
-        tt0 = np.einsum(w0, [0, 4], t0, [4, 1, 2, 3])
-        tt1 = np.einsum(t1, [0, 1, 2, 4], w2, [4, 3])
+        assert np.allclose(checked_einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
+        t0 = checked_einsum(t0, [0, 4, 3], p0, [1, 4, 2])
+        t1 = checked_einsum(t1, [1, 4, 3], p1, [0, 2, 4])
+        assert np.allclose(checked_einsum(t0, [0, 1, 4, 5], t1, [4, 5, 2, 3]), B)
+        tt0 = checked_einsum(w0, [0, 4], t0, [4, 1, 2, 3])
+        tt1 = checked_einsum(t1, [0, 1, 2, 4], w2, [4, 3])
         _, PLh, PR = q.mps.projector(tt0, [0, 1, 4, 5], tt1, [4, 5, 2, 3])
         assert np.allclose(
-            np.einsum(PLh, [2, 3, 0], PR, [2, 3, 1]), np.identity(PLh.shape[2])
+            checked_einsum(PLh, [2, 3, 0], PR, [2, 3, 1]), np.identity(PLh.shape[2])
         )
-        tt0 = np.einsum(t0, [0, 1, 3, 4], PR, [3, 4, 2])
-        tt1 = np.einsum(PLh, [3, 4, 0], t1, [3, 4, 1, 2])
-        A = np.einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
+        tt0 = checked_einsum(t0, [0, 1, 3, 4], PR, [3, 4, 2])
+        tt1 = checked_einsum(PLh, [3, 4, 0], t1, [3, 4, 1, 2])
+        A = checked_einsum(tt0, [0, 1, 4], tt1, [4, 2, 3])
         print(np.linalg.norm(A - B))
         assert np.allclose(A, B)
 
