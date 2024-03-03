@@ -7,6 +7,9 @@ from typing_extensions import TypeGuard
 
 
 class mps(ABC):
+    q2t: list[int]
+    t2q: list[int]
+
     @abstractmethod
     def __init__(self, tensors: list[npt.NDArray], nkeep: int | None) -> None: ...
 
