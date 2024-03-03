@@ -17,4 +17,5 @@ def probability(v, pos=None):
         for k in range(num_qubits(w)):
             if k not in pos:
                 tpos.append(k)
-        return np.diag(matrix(trace(density_matrix(w), tpos).real))
+        traced = np.real(trace(density_matrix(w), tpos))
+        return np.diag(matrix(traced))
