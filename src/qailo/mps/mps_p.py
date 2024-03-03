@@ -62,7 +62,7 @@ class projector_mps(mps):
         for t in range(1, n):
             ss0 = list(range(t + 1)) + [t + 3]
             ss1 = [t + 3, t + 1, t + 2]
-            v = np.einsum(v, ss0, self._tensor(t), ss1)
+            v = ec.einsum_cast(v, ss0, self._tensor(t), ss1)
         v = v.reshape((2,) * n)
         return ec.einsum_cast(v, self.t2q).reshape((2,) * n + (1,))
 
@@ -133,7 +133,7 @@ class projector_mps(mps):
 
     def _apply_one(self, p: npt.NDArray, s: int) -> None:
         assert op.num_qubits(p) == 1
-        self.tensors[s] = np.einsum(self.tensors[s], [0, 3, 2], p, [1, 3])
+        self.tensors[s] = ec.einsum_cast(self.tensors[s], [0, 3, 2], p, [1, 3])
         self.cp[0] = min(self.cp[0], s)
         self.cp[1] = max(self.cp[1], s)
 

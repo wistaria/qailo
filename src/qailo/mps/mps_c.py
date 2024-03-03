@@ -72,7 +72,7 @@ class canonical_mps(mps):
             for t in range(self.cp[0], p0):
                 L, R = tensor_svd(self.tensors[t], LegPartition([0, 1], [2]), "left")
                 self.tensors[t] = L
-                self.tensors[t + 1] = np.einsum(
+                self.tensors[t + 1] = ec.einsum_cast(
                     R, [0, 3], self.tensors[t + 1], [3, 1, 2]
                 )
         self.cp[0] = p0
@@ -80,7 +80,7 @@ class canonical_mps(mps):
         if self.cp[1] > p1:
             for t in range(self.cp[1], p1, -1):
                 L, R = tensor_svd(self.tensors[t], LegPartition([0], [1, 2]), "right")
-                self.tensors[t - 1] = np.einsum(
+                self.tensors[t - 1] = ec.einsum_cast(
                     self.tensors[t - 1], [0, 1, 3], L, [3, 2]
                 )
                 self.tensors[t] = R

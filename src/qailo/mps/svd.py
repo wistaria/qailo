@@ -38,7 +38,7 @@ def tensor_svd(
     assert sorted(partition[0] + partition[1]) == list(range(T.ndim))
     dimsL = [T.shape[i] for i in partition[0]]
     dimsR = [T.shape[i] for i in partition[1]]
-    m = np.einsum(T, partition[0] + partition[1]).reshape(
+    m = ec.einsum_cast(T, partition[0] + partition[1]).reshape(
         np.prod(dimsL), np.prod(dimsR)
     )
     S, U, V = compact_svd(m, nkeep=nkeep, tol=tol)
