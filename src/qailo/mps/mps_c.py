@@ -64,7 +64,7 @@ class canonical_mps(mps):
     def _tensor(self, t: int) -> npt.NDArray:
         return self.tensors[t]
 
-    def _canonicalize(self, p0: int, p1: int | None) -> None:
+    def _canonicalize(self, p0: int, p1: int | None = None) -> None:
         p1 = p0 if p1 is None else p1
         n = len(self.tensors)
         assert 0 <= p0 and p0 <= p1 and p1 < n
