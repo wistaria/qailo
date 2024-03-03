@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 import numpy.typing as npt
-from typing_extensions import SupportsIndex
+from typing_extensions import TypeGuard
 
 
 class mps(ABC):
@@ -20,7 +20,7 @@ class mps(ABC):
     def _state_vector(self) -> npt.NDArray: ...
 
     @abstractmethod
-    def _tensor(self, t: SupportsIndex | slice) -> npt.NDArray: ...
+    def _tensor(self, t: int) -> npt.NDArray: ...
 
     @abstractmethod
     def _canonicalize(self, p0: int, p1: int | None) -> None: ...
