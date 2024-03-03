@@ -1,12 +1,16 @@
+from __future__ import annotations
+
 import numpy as np
+import numpy.typing as npt
 import qailo as q
 from pytest import approx
+from qailo.mps.type import mps as mpstype
 
 
 def test_canonical():
     n = 16
     nkeep = 4
-    tensors = []
+    tensors: list[npt.NDArray] = []
     d = np.random.randint(2, nkeep)
     tensors.append(np.random.random((1, 2, d)))
     for _ in range(n - 2):
@@ -16,6 +20,7 @@ def test_canonical():
     tensors.append(np.random.random((d, 2, 1)))
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
+        assert isinstance(m, mpstype)
         norm = q.norm(m)
         assert q.norm(m) == approx(norm)
         assert q.mps.is_canonical(m)
@@ -38,6 +43,7 @@ def test_canonical():
     tensors = q.mps.tensor_decomposition(v, nkeep)
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
+        assert isinstance(m, mpstype)
         norm = q.norm(m)
 
         for _ in range(n):

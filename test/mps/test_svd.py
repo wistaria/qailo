@@ -1,5 +1,5 @@
 import numpy as np
-from qailo.mps.svd import compact_svd, tensor_svd
+from qailo.mps.svd import LegPartition, compact_svd, tensor_svd
 
 
 def test_compact_svd():
@@ -42,7 +42,7 @@ def test_svd_left():
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p))
-        L, R = tensor_svd(T, [[0, 1], [2]], "left")
+        L, R = tensor_svd(T, LegPartition([0, 1], [2]), "left")
         assert len(L.shape) == 3
         assert len(R.shape) == 2
         assert L.shape[0] == m
@@ -50,7 +50,7 @@ def test_svd_left():
         assert L.shape[2] == R.shape[0]
         assert R.shape[1] == p
         assert np.allclose(T, np.einsum("ijl,lk->ijk", L, R))
-        L, R = tensor_svd(T, [[0, 1], [2]], "left", nkeep=d)
+        L, R = tensor_svd(T, LegPartition([0, 1], [2]), "left", nkeep=d)
         assert len(L.shape) == 3
         assert len(R.shape) == 2
         assert L.shape[0] == m
@@ -65,7 +65,7 @@ def test_svd_left():
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p)) + 1j * np.random.random((m, n, p))
-        L, R = tensor_svd(T, [[0, 1], [2]], "left")
+        L, R = tensor_svd(T, LegPartition([0, 1], [2]), "left")
         assert len(L.shape) == 3
         assert len(R.shape) == 2
         assert L.shape[0] == m
@@ -73,7 +73,7 @@ def test_svd_left():
         assert L.shape[2] == R.shape[0]
         assert R.shape[1] == p
         assert np.allclose(T, np.einsum("ijl,lk->ijk", L, R))
-        L, R = tensor_svd(T, [[0, 1], [2]], "left", nkeep=d)
+        L, R = tensor_svd(T, LegPartition([0, 1], [2]), "left", nkeep=d)
         assert len(L.shape) == 3
         assert len(R.shape) == 2
         assert L.shape[0] == m
@@ -92,7 +92,7 @@ def test_svd_right():
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p))
-        L, R = tensor_svd(T, [[0], [1, 2]], "right")
+        L, R = tensor_svd(T, LegPartition([0], [1, 2]), "right")
         assert len(L.shape) == 2
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -100,7 +100,7 @@ def test_svd_right():
         assert R.shape[1] == n
         assert R.shape[2] == p
         assert np.allclose(T, np.einsum("il,ljk->ijk", L, R))
-        L, R = tensor_svd(T, [[0], [1, 2]], "right", nkeep=d)
+        L, R = tensor_svd(T, LegPartition([0], [1, 2]), "right", nkeep=d)
         assert len(L.shape) == 2
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -115,7 +115,7 @@ def test_svd_right():
     for _ in range(nt):
         m, n, p, d = np.random.randint(2, maxn, size=(4,))
         T = np.random.random((m, n, p)) + 1j * np.random.random((m, n, p))
-        L, R = tensor_svd(T, [[0], [1, 2]], "right")
+        L, R = tensor_svd(T, LegPartition([0], [1, 2]), "right")
         assert len(L.shape) == 2
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -123,7 +123,7 @@ def test_svd_right():
         assert R.shape[1] == n
         assert R.shape[2] == p
         assert np.allclose(T, np.einsum("il,ljk->ijk", L, R))
-        L, R = tensor_svd(T, [[0], [1, 2]], "right", nkeep=d)
+        L, R = tensor_svd(T, LegPartition([0], [1, 2]), "right", nkeep=d)
         assert len(L.shape) == 2
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -142,7 +142,7 @@ def test_svd_two():
     for _ in range(nt):
         m, n, p, r, d = np.random.randint(2, maxn, size=(5,))
         T = np.random.random((m, n, p, r))
-        L, R = tensor_svd(T, [[0, 1], [2, 3]])
+        L, R = tensor_svd(T, LegPartition([0, 1], [2, 3]))
         assert len(L.shape) == 3
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -151,7 +151,7 @@ def test_svd_two():
         assert R.shape[1] == p
         assert R.shape[2] == r
         assert np.allclose(T, np.einsum("ijm,mkl->ijkl", L, R))
-        L, R = tensor_svd(T, [[0, 1], [2, 3]], nkeep=d)
+        L, R = tensor_svd(T, LegPartition([0, 1], [2, 3]), nkeep=d)
         assert len(L.shape) == 3
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -167,7 +167,7 @@ def test_svd_two():
     for _ in range(nt):
         m, n, p, r, d = np.random.randint(2, maxn, size=(5,))
         T = np.random.random((m, n, p, r)) + 1j * np.random.random((m, n, p, r))
-        L, R = tensor_svd(T, [[0, 1], [2, 3]])
+        L, R = tensor_svd(T, LegPartition([0, 1], [2, 3]))
         assert len(L.shape) == 3
         assert len(R.shape) == 3
         assert L.shape[0] == m
@@ -176,7 +176,7 @@ def test_svd_two():
         assert R.shape[1] == p
         assert R.shape[2] == r
         assert np.allclose(T, np.einsum("ijm,mkl->ijkl", L, R))
-        L, R = tensor_svd(T, [[0, 1], [2, 3]], nkeep=d)
+        L, R = tensor_svd(T, LegPartition([0, 1], [2, 3]), nkeep=d)
         assert len(L.shape) == 3
         assert len(R.shape) == 3
         assert L.shape[0] == m

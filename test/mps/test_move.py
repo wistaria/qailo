@@ -1,14 +1,18 @@
+from __future__ import annotations
+
 import numpy as np
+import numpy.typing as npt
 import qailo as q
 from pytest import approx
 from qailo.mps.apply import _move_qubit, _swap_tensors
+from qailo.mps.type import mps as mpstype
 
 
 def test_swap():
     np.random.seed(1234)
     n = 12
     nkeep = 4
-    tensors = []
+    tensors: list[npt.NDArray] = []
     d = np.random.randint(2, nkeep)
     tensors.append(np.random.random((1, 2, d)))
     for _ in range(n - 2):
@@ -18,6 +22,7 @@ def test_swap():
     tensors.append(np.random.random((d, 2, 1)))
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
+        assert isinstance(m, mpstype)
         q.mps.is_canonical(m)
         norm = q.norm(m)
         v = q.sv.vector(q.mps.state_vector(m))
@@ -40,7 +45,7 @@ def test_move():
     # n = 12
     n = 4
     nkeep = 4
-    tensors = []
+    tensors: list[npt.NDArray] = []
     d = np.random.randint(2, nkeep)
     tensors.append(np.random.random((1, 2, d)))
     for _ in range(n - 2):
@@ -50,6 +55,7 @@ def test_move():
     tensors.append(np.random.random((d, 2, 1)))
     for mps in [q.mps.canonical_mps, q.mps.projector_mps]:
         m = mps(tensors)
+        assert isinstance(m, mpstype)
         q.mps.is_canonical(m)
         norm = q.norm(m)
         v = q.sv.vector(q.mps.state_vector(m))

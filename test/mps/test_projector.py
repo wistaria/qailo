@@ -1,6 +1,6 @@
 import numpy as np
 import qailo as q
-from qailo.mps.svd import compact_svd, tensor_svd
+from qailo.mps.svd import LegPartition, compact_svd, tensor_svd
 
 
 def test_projector():
@@ -30,7 +30,9 @@ def test_projector():
         A = np.einsum(T0, [0, 1, 4, 5], PR, [4, 5, 6], PLh, [7, 8, 6], T1, [8, 7, 2, 3])
 
         L, R = tensor_svd(
-            np.einsum(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3]), [[0, 1], [2, 3]], nkeep=d
+            np.einsum(T0, [0, 1, 4, 5], T1, [5, 4, 2, 3]),
+            LegPartition([0, 1], [2, 3]),
+            nkeep=d,
         )
         B = np.einsum(L, [0, 1, 4], R, [4, 2, 3])
         assert np.allclose(A, B)
@@ -42,7 +44,7 @@ def test_projector():
         w2 = np.random.random((2, 2)) + 1.0j * np.random.random((2, 2))
         p = np.random.random((2, 2, 2, 2)) + 1.0j * np.random.random((2, 2, 2, 2))
         B = np.einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
-        p0, p1 = tensor_svd(p, [[0, 2], [1, 3]])
+        p0, p1 = tensor_svd(p, LegPartition([0, 2], [1, 3]))
         assert np.allclose(np.einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
         t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
         t1 = np.einsum(t1, [0, 4, 3], p1, [1, 2, 4])
@@ -66,7 +68,7 @@ def test_projector():
         w2 = np.random.random((2, 2)) + 1.0j * np.random.random((2, 2))
         p = np.random.random((2, 2, 2, 2)) + 1.0j * np.random.random((2, 2, 2, 2))
         B = np.einsum(t0, [0, 4, 6], t1, [6, 5, 3], p, [1, 2, 4, 5])
-        p0, p1 = tensor_svd(p, [[0, 2], [1, 3]])
+        p0, p1 = tensor_svd(p, LegPartition([0, 2], [1, 3]))
         assert np.allclose(np.einsum(p0, [0, 2, 4], p1, [4, 1, 3]), p)
         t0 = np.einsum(t0, [0, 4, 3], p0, [1, 4, 2])
         t1 = np.einsum(t1, [1, 4, 3], p1, [0, 2, 4])
