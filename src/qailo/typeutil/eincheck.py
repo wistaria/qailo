@@ -74,5 +74,5 @@ def einsum_cast(
 ) -> npt.NDArray: ...
 
 
-def einsum_cast(*args, **kwargs):
+def einsum_cast(*args, **kwargs) -> npt.NDArray:
     return np.asarray(np.einsum(*args, **kwargs))
