@@ -89,7 +89,7 @@ class canonical_mps(mps):
     def _is_canonical(self) -> bool:
         # tensor shape
         n = len(self.tensors)
-        dims = []
+        dims: list[int] = []
         assert self.tensors[0].shape[0] == 1
         dims.append(self.tensors[0].shape[0])
         for t in range(1, n - 1):

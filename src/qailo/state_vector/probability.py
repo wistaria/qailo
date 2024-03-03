@@ -18,7 +18,7 @@ def probability(v: npt.NDArray, pos: Container[int] | None = None) -> npt.NDArra
     if pos is None:
         return abs(vector(w)) ** 2
     else:
-        tpos = []
+        tpos: list[int] = []
         for k in range(num_qubits(w)):
             if k not in pos:
                 tpos.append(k)
