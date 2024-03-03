@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import Literal, NamedTuple
 
 import numpy as np
 import numpy.typing as npt
-from typing_extensions import Literal
 
 from ..typeutil import eincheck as ec
 
