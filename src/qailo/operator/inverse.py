@@ -1,10 +1,14 @@
+from __future__ import annotations
+
+from typing import Reversible
+
 from .hconj import hconj
-from .type import is_operator
+from .type import OPAutomaton, is_operator
 
 
-def inverse_seq(seq):
-    res = []
+def inverse_seq(seq: Reversible[OPAutomaton]) -> list[OPAutomaton]:
+    res: list[OPAutomaton] = []
     for p, pos in reversed(seq):
         assert is_operator(p)
-        res.append([hconj(p), pos])
+        res.append(OPAutomaton(hconj(p), pos))
     return res

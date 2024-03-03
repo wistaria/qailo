@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import numpy as np
+import numpy.typing as npt
 
 from .matrix import matrix
 from .one_qubit import p, x, z
-from .type import is_operator, num_qubits
+from .type import OPAutomaton, is_operator, num_qubits
 
 
-def controlled(u):
+def controlled(u: npt.NDArray) -> npt.NDArray:
     assert is_operator(u)
     m = num_qubits(u)
     n = m + 1
@@ -14,18 +17,18 @@ def controlled(u):
     return op.reshape((2,) * (2 * n))
 
 
-def cp(phi):
+def cp(phi: float) -> npt.NDArray:
     return controlled(p(phi))
 
 
-def cx(n=2):
+def cx(n: int = 2) -> npt.NDArray:
     op = x()
     for _ in range(n - 1):
         op = controlled(op)
     return op
 
 
-def cz(n=2):
+def cz(n: int = 2) -> npt.NDArray:
     op = z()
     for _ in range(n - 1):
         op = controlled(op)
@@ -33,7 +36,7 @@ def cz(n=2):
 
 
 # mpo representation of controlled gates
-def control_begin():
+def control_begin() -> npt.NDArray:
     op = np.zeros([2, 2, 2, 2, 2])
     op[0, 0, 0, 0, 0] = 1
     op[0, 1, 0, 0, 1] = 1
@@ -42,7 +45,7 @@ def control_begin():
     return op.reshape([2, 4, 2, 2])
 
 
-def control_propagate():
+def control_propagate() -> npt.NDArray:
     op = np.zeros([2, 2, 2, 2, 2, 2])
     op[0, 0, 0, 0, 0, 0] = 1
     op[1, 0, 0, 1, 0, 0] = 1
@@ -55,7 +58,7 @@ def control_propagate():
     return op.reshape([2, 4, 4, 2])
 
 
-def control_end(u):
+def control_end(u: npt.NDArray) -> npt.NDArray:
     assert is_operator(u)
     m = num_qubits(u)
     n = m + 1
@@ -67,9 +70,9 @@ def control_end(u):
     return op.reshape((2,) * n + (4,) + (2,) * m)
 
 
-def controlled_seq(u, pos):
+def controlled_seq(u: npt.NDArray, pos: list[int]) -> list[OPAutomaton]:
     n = len(pos)
-    seq = []
+    seq: list[OPAutomaton] = []
     if n <= 1:
         raise ValueError
     elif n == 2:

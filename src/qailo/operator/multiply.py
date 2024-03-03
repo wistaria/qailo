@@ -1,9 +1,16 @@
-import numpy as np
+from __future__ import annotations
 
+from typing import Sequence
+
+import numpy.typing as npt
+
+from ..typeutil import eincheck as ec
 from .type import is_operator, num_qubits
 
 
-def multiply(pin, p, pos=None):
+def multiply(
+    pin: npt.NDArray, p: npt.NDArray, pos: Sequence[int] | None = None
+) -> npt.NDArray:
     assert is_operator(pin)
     assert is_operator(p)
     n = num_qubits(pin)
@@ -21,4 +28,4 @@ def multiply(pin, p, pos=None):
     for i in range(m):
         ss_pin[pos[i]] = ss_p[m + i]
         ss_to[pos[i]] = ss_p[i]
-    return np.einsum(pin, ss_pin, p, ss_p, ss_to)
+    return ec.einsum_cast(pin, ss_pin, p, ss_p, ss_to)
