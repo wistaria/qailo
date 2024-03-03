@@ -3,9 +3,10 @@ from __future__ import annotations
 import numpy as np
 import numpy.typing as npt
 
+from ..util.helpertype import OPSeqElement
 from .matrix import matrix
 from .one_qubit import p, x, z
-from .type import OPAutomaton, is_operator, num_qubits
+from .type import is_operator, num_qubits
 
 
 def controlled(u: npt.NDArray) -> npt.NDArray:
@@ -70,16 +71,16 @@ def control_end(u: npt.NDArray) -> npt.NDArray:
     return op.reshape((2,) * n + (4,) + (2,) * m)
 
 
-def controlled_seq(u: npt.NDArray, pos: list[int]) -> list[OPAutomaton]:
+def controlled_seq(u: npt.NDArray, pos: list[int]) -> list[OPSeqElement]:
     n = len(pos)
-    seq: list[OPAutomaton] = []
+    seq: list[OPSeqElement] = []
     if n <= 1:
         raise ValueError
     elif n == 2:
-        seq.append(OPAutomaton(controlled(u), pos))
+        seq.append(OPSeqElement(controlled(u), pos))
     else:
-        seq.append(OPAutomaton(control_begin(), [pos[0], pos[1]]))
+        seq.append(OPSeqElement(control_begin(), [pos[0], pos[1]]))
         for i in range(1, n - 2):
-            seq.append(OPAutomaton(control_propagate(), [pos[i], pos[i + 1]]))
-        seq.append(OPAutomaton(control_end(u), [pos[-2], pos[-1]]))
+            seq.append(OPSeqElement(control_propagate(), [pos[i], pos[i + 1]]))
+        seq.append(OPSeqElement(control_end(u), [pos[-2], pos[-1]]))
     return seq
