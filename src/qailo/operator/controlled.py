@@ -73,10 +73,10 @@ def controlled_seq(u, pos):
     if n <= 1:
         raise ValueError
     elif n == 2:
-        seq.append([controlled(u), pos])
+        seq.append(OPAutomaton(controlled(u), pos))
     else:
-        seq.append([control_begin(), [pos[0], pos[1]]])
+        seq.append(OPAutomaton(control_begin(), [pos[0], pos[1]]))
         for i in range(1, n - 2):
-            seq.append([control_propagate(), [pos[i], pos[i + 1]]])
-        seq.append([control_end(u), [pos[-2], pos[-1]]])
+            seq.append(OPAutomaton(control_propagate(), [pos[i], pos[i + 1]]))
+        seq.append(OPAutomaton(control_end(u), [pos[-2], pos[-1]]))
     return seq
