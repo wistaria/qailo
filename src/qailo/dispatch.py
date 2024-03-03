@@ -27,9 +27,11 @@ def apply_seq(v, seq):
 
 def norm(v):
     if sv.is_state_vector(v):
-        return np.linalg.norm(v)
+        return float(np.linalg.norm(v))
     elif mps.is_mps(v):
         return v._norm()
+    else:
+        assert False
 
 
 def num_qubits(v):
