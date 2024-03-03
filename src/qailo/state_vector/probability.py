@@ -9,7 +9,7 @@ from .vector import vector
 
 def probability(v, pos=None):
     assert is_state_vector(v)
-    w = v / np.linalg.norm(v)
+    w = v / float(np.linalg.norm(v))
     if pos is None:
         return abs(vector(w)) ** 2
     else:
