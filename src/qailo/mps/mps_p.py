@@ -41,9 +41,9 @@ class projector_mps(mps):
     def _norm(self):
         A = np.identity(1)
         for t in range(self._num_qubits()):
-            A = np.einsum("ij,jkl->ikl", A, self._tensor(t))
-            A = np.einsum("ijk,ijl->kl", A, self._tensor(t).conj())
-        return np.sqrt(np.trace(A))
+        ret = np.sqrt(np.trace(A))
+        assert isinstance(ret, float)
+        return ret
 
     def _state_vector(self):
         n = self._num_qubits()
