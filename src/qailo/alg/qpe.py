@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from copy import deepcopy
 
 import numpy as np
+import numpy.typing as npt
 
 import qailo as q
 
 
-def qpe(n, u, v):
+def qpe(n: int, u: npt.NDArray, v: npt.NDArray) -> npt.NDArray:
     m = q.num_qubits(u)
     w = deepcopy(v)
     assert q.num_qubits(w) == m + n
