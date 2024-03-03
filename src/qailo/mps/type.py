@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 import numpy.typing as npt
 from typing_extensions import TypeGuard
@@ -38,13 +39,13 @@ class mps(ABC):
     def _apply_two(self, p: npt.NDArray, s: int, reverse: bool = False) -> None: ...
 
 
-def is_canonical(m):
+def is_canonical(m: mps) -> bool:
     return m._is_canonical()
 
 
-def is_mps(m):
+def is_mps(m: Any) -> TypeGuard[mps]:
     return isinstance(m, mps)
 
 
-def num_qubits(m):
+def num_qubits(m: mps) -> int:
     return len(m.q2t)

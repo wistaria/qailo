@@ -1,7 +1,22 @@
+from __future__ import annotations
+
+from typing import NamedTuple
+
 import numpy as np
+import numpy.typing as npt
+from typing_extensions import Literal
+
+from ..typeutil import eincheck as ec
 
 
-def compact_svd(A, nkeep=None, tol=1e-12):
+class LegPartition(NamedTuple):
+    leg0: list[int]
+    leg1: list[int]
+
+
+def compact_svd(
+    A: npt.NDArray, nkeep: int | None = None, tol: float = 1e-12
+) -> tuple[npt.NDArray, npt.NDArray, npt.NDArray]:
     assert A.ndim == 2
     U, S, Vh = np.linalg.svd(A, full_matrices=False)
     V = Vh.conj().T
@@ -10,7 +25,13 @@ def compact_svd(A, nkeep=None, tol=1e-12):
     return S[:dimS], U[:, :dimS], V[:, :dimS]
 
 
-def tensor_svd(T, partition, canonical="center", nkeep=None, tol=1e-12):
+def tensor_svd(
+    T: npt.NDArray,
+    partition: LegPartition,
+    canonical: Literal["center", "left", "right"] = "center",
+    nkeep: int | None = None,
+    tol: float = 1e-12,
+) -> tuple[npt.NDArray, npt.NDArray]:
     legsL = len(partition[0])
     legsR = len(partition[1])
     assert T.ndim == legsL + legsR
@@ -24,12 +45,12 @@ def tensor_svd(T, partition, canonical="center", nkeep=None, tol=1e-12):
     L = U
     R = V.conj().T
     if canonical == "center":
-        L = np.einsum("ij,j->ij", L, np.sqrt(S))
-        R = np.einsum("i,ij->ij", np.sqrt(S), R)
+        L = ec.einsum_cast("ij,j->ij", L, np.sqrt(S))
+        R = ec.einsum_cast("i,ij->ij", np.sqrt(S), R)
     elif canonical == "left":
-        R = np.einsum("i,ij->ij", S, R)
+        R = ec.einsum_cast("i,ij->ij", S, R)
     elif canonical == "right":
-        L = np.einsum("ij,j->ij", L, S)
+        L = ec.einsum_cast("ij,j->ij", L, S)
     else:
         raise ValueError
     L = L.reshape(dimsL + [S.shape[0]])

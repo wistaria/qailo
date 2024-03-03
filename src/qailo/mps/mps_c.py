@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 from copy import deepcopy
 
 import numpy as np
+import numpy.typing as npt
 
 from ..operator import type as op
-from .svd import tensor_svd
+from ..typeutil import eincheck as ec
+from .svd import LegPartition, tensor_svd
 from .type import mps
 
 
@@ -22,7 +26,11 @@ class canonical_mps(mps):
         tensors [cp(1)+1...n-1]: right canonical
     """
 
-    def __init__(self, tensors, nkeep=None):
+    tensors: list[npt.NDArray]
+    nkeep: int | None
+    cp: list[int]
+
+    def __init__(self, tensors: list[npt.NDArray], nkeep: int | None = None) -> None:
         assert isinstance(tensors, list)
         self.tensors = deepcopy(tensors)
         self.nkeep = nkeep
@@ -31,38 +39,38 @@ class canonical_mps(mps):
         self.t2q = list(range(n))
         self.cp = [0, n - 1]
 
-    def _num_qubits(self):
+    def _num_qubits(self) -> int:
         return len(self.tensors)
 
-    def _norm(self):
+    def _norm(self) -> float:
         A = np.identity(1)
         for t in range(self._num_qubits()):
-            A = np.einsum("ij,jkl->ikl", A, self._tensor(t))
-            A = np.einsum("ijk,ijl->kl", A, self._tensor(t).conj())
+            A = ec.einsum_cast("ij,jkl->ikl", A, self._tensor(t))
+            A = ec.einsum_cast("ijk,ijl->kl", A, self._tensor(t).conj())
         ret = np.sqrt(np.trace(A))
         assert isinstance(ret, float)
         return ret
 
-    def _state_vector(self):
+    def _state_vector(self) -> npt.NDArray:
         n = self._num_qubits()
         v = self._tensor(0)
         for t in range(1, n):
             ss0 = list(range(t + 1)) + [t + 3]
             ss1 = [t + 3, t + 1, t + 2]
-            v = np.einsum(v, ss0, self._tensor(t), ss1)
+            v = ec.einsum_cast(v, ss0, self._tensor(t), ss1)
         v = v.reshape((2,) * n)
-        return np.einsum(v, self.t2q).reshape((2,) * n + (1,))
+        return ec.einsum_cast(v, self.t2q).reshape((2,) * n + (1,))
 
-    def _tensor(self, t):
+    def _tensor(self, t: int) -> npt.NDArray:
         return self.tensors[t]
 
-    def _canonicalize(self, p0, p1=None):
+    def _canonicalize(self, p0: int, p1: int | None) -> None:
         p1 = p0 if p1 is None else p1
         n = len(self.tensors)
         assert 0 <= p0 and p0 <= p1 and p1 < n
         if self.cp[0] < p0:
             for t in range(self.cp[0], p0):
-                L, R = tensor_svd(self.tensors[t], [[0, 1], [2]], "left")
+                L, R = tensor_svd(self.tensors[t], LegPartition([0, 1], [2]), "left")
                 self.tensors[t] = L
                 self.tensors[t + 1] = np.einsum(
                     R, [0, 3], self.tensors[t + 1], [3, 1, 2]
@@ -71,14 +79,14 @@ class canonical_mps(mps):
         self.cp[1] = max(p0, self.cp[1])
         if self.cp[1] > p1:
             for t in range(self.cp[1], p1, -1):
-                L, R = tensor_svd(self.tensors[t], [[0], [1, 2]], "right")
+                L, R = tensor_svd(self.tensors[t], LegPartition([0], [1, 2]), "right")
                 self.tensors[t - 1] = np.einsum(
                     self.tensors[t - 1], [0, 1, 3], L, [3, 2]
                 )
                 self.tensors[t] = R
         self.cp[1] = p1
 
-    def _is_canonical(self):
+    def _is_canonical(self) -> bool:
         # tensor shape
         n = len(self.tensors)
         dims = []
@@ -102,23 +110,27 @@ class canonical_mps(mps):
         assert self.cp[0] in range(n)
         assert self.cp[1] in range(n)
         for t in range(0, self.cp[0]):
-            A = np.einsum(self.tensors[t], [2, 3, 1], self.tensors[t].conj(), [2, 3, 0])
+            A = ec.einsum_cast(
+                self.tensors[t], [2, 3, 1], self.tensors[t].conj(), [2, 3, 0]
+            )
             assert np.allclose(A, np.identity(A.shape[0]))
         for t in range(self.cp[1] + 1, n):
-            A = np.einsum(self.tensors[t], [1, 3, 2], self.tensors[t].conj(), [0, 3, 2])
+            A = ec.einsum_cast(
+                self.tensors[t], [1, 3, 2], self.tensors[t].conj(), [0, 3, 2]
+            )
             assert np.allclose(A, np.identity(A.shape[0]))
         return True
 
-    def _apply_one(self, p, s):
+    def _apply_one(self, p: npt.NDArray, s: int) -> None:
         """
         apply 1-qubit operator on tensor at s
         """
         assert op.num_qubits(p) == 1
-        self.tensors[s] = np.einsum(self.tensors[s], [0, 3, 2], p, [1, 3])
+        self.tensors[s] = ec.einsum_cast(self.tensors[s], [0, 3, 2], p, [1, 3])
         self.cp[0] = min(self.cp[0], s)
         self.cp[1] = max(self.cp[1], s)
 
-    def _apply_two(self, p, s, reverse=False):
+    def _apply_two(self, p: npt.NDArray, s: int, reverse: bool = False) -> None:
         """
         apply 2-qubit operator on neighboring tensors at s and s+1
         """
@@ -126,11 +138,11 @@ class canonical_mps(mps):
         self._canonicalize(s, s + 1)
         t0 = self.tensors[s]
         t1 = self.tensors[s + 1]
-        t = np.einsum(t0, [0, 1, 4], t1, [4, 2, 3])
+        t = ec.einsum_cast(t0, [0, 1, 4], t1, [4, 2, 3])
         if not reverse:
-            t = np.einsum(t, [0, 4, 5, 3], p, [1, 2, 4, 5])
+            t = ec.einsum_cast(t, [0, 4, 5, 3], p, [1, 2, 4, 5])
         else:
-            t = np.einsum(t, [0, 4, 5, 3], p, [2, 1, 5, 4])
-        L, R = tensor_svd(t, [[0, 1], [2, 3]], nkeep=self.nkeep)
+            t = ec.einsum_cast(t, [0, 4, 5, 3], p, [2, 1, 5, 4])
+        L, R = tensor_svd(t, LegPartition([0, 1], [2, 3]), nkeep=self.nkeep)
         self.tensors[s] = L
         self.tensors[s + 1] = R

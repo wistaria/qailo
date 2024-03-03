@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 from copy import deepcopy
+from typing import Iterable, Sequence
+
+import numpy.typing as npt
 
 from ..operator import type as op
 from ..operator.swap import swap
 from . import type as mps
 
 
-def _swap_tensors(m, s):
+def _swap_tensors(m: mps.mps, s: int) -> None:
     """
     swap neighboring two tensors at s and s+1
     """
@@ -16,7 +21,7 @@ def _swap_tensors(m, s):
     m.t2q[s], m.t2q[s + 1] = p1, p0
 
 
-def _move_qubit(m, p, s):
+def _move_qubit(m: mps.mps, p: int, s: int) -> None:
     if m.q2t[p] != s:
         # print(f"moving qubit {p} at {m.q2t[p]} to {s}")
         for u in range(m.q2t[p], s):
@@ -27,7 +32,7 @@ def _move_qubit(m, p, s):
             _swap_tensors(m, u - 1)
 
 
-def _apply(m, p, pos=None):
+def _apply(m: mps.mps, p: npt.NDArray, pos: Sequence[int] | None = None) -> mps.mps:
     assert op.is_operator(p)
     n = mps.num_qubits(m)
     if pos is None:
@@ -50,15 +55,19 @@ def _apply(m, p, pos=None):
     return m
 
 
-def apply(m, p, pos=None):
+def apply(m: mps.mps, p: npt.NDArray, pos: Sequence[int] | None = None) -> mps.mps:
     return _apply(deepcopy(m), p, pos)
 
 
-def _apply_seq(m, seq):
+def _apply_seq(
+    m: mps.mps, seq: Iterable[tuple[npt.NDArray, Sequence[int] | None]]
+) -> mps.mps:
     for p, qubit in seq:
         _apply(m, p, qubit)
     return m
 
 
-def apply_seq(m, seq):
+def apply_seq(
+    m: mps.mps, seq: Iterable[tuple[npt.NDArray, Sequence[int] | None]]
+) -> mps.mps:
     return _apply_seq(deepcopy(m), seq)
