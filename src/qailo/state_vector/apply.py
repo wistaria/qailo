@@ -1,10 +1,19 @@
-import numpy as np
+from __future__ import annotations
+
+from typing import Iterable, Sequence
+
+import numpy.typing as npt
 
 from ..operator import type as op
+from ..typeutil import eincheck as ec
 from . import type as sv
 
 
-def apply(v, p, pos=None):
+def apply(
+    v: npt.NDArray,
+    p: npt.NDArray,
+    pos: Sequence[int] | None = None,
+) -> npt.NDArray:
     assert sv.is_state_vector(v) and op.is_operator(p)
     n = sv.num_qubits(v)
     m = op.num_qubits(p)
@@ -19,10 +28,13 @@ def apply(v, p, pos=None):
     for i in range(m):
         ss_v[pos[i]] = ss_op[m + i]
         ss_to[pos[i]] = ss_op[i]
-    return np.einsum(v, ss_v, p, ss_op, ss_to)
+    return ec.einsum_cast(v, ss_v, p, ss_op, ss_to)
 
 
-def apply_seq(v, seq):
+def apply_seq(
+    v: npt.NDArray,
+    seq: Iterable[tuple[npt.NDArray, Sequence[int]]],
+) -> npt.NDArray:
     for p, qubit in seq:
         v = apply(v, p, qubit)
     return v
