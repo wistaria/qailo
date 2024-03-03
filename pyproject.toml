@@ -6,13 +6,9 @@ build-backend = "setuptools.build_meta"
 name = "qailo"
 description = "Simplest Quantum Circuit Simulator"
 readme = "README.md"
-authors = [
-    { name = "Synge Todo", email = "wistaria@phys.s.u-tokyo.ac.jp" },
-]
+authors = [{ name = "Synge Todo", email = "wistaria@phys.s.u-tokyo.ac.jp" }]
 license = { file = "LICENSE" }
-classifiers = [
-    "Programming Language :: Python :: 3",
-]
+classifiers = ["Programming Language :: Python :: 3"]
 dynamic = ["version"]
 dependencies = ["matplotlib", "numpy"]
 
@@ -24,6 +20,9 @@ write_to = "src/qailo/_version.py"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
+
+[tool.setuptools.package-data]
+"qailo" = ["py.typed"]
 
 [project.optional-dependencies]
 dev = ["pytest", "black", "ruff", "typing-extensions"]
