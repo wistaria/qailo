@@ -1,7 +1,8 @@
 import random
 
-import qailo as q
 from pytest import approx
+
+import qailo as q
 
 
 def apply(op, m0, m1, m2, m3, v, seq, pos):

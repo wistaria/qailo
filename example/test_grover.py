@@ -1,6 +1,7 @@
-import qailo as q
 from grover import grover
 from pytest import approx
+
+import qailo as q
 
 
 def test_grover():

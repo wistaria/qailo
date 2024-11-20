@@ -1,6 +1,7 @@
 import numpy as np
-import qailo as q
 from pytest import approx
+
+import qailo as q
 from qailo.mps.apply import _move_qubit, _swap_tensors
 
 
