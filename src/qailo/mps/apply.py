@@ -1,8 +1,26 @@
 from copy import deepcopy
 
+import numpy as np
+
 from ..operator import type as op
 from ..operator.swap import swap
 from . import type as mps
+
+
+def _swap24():
+    op = np.array(
+        [
+            [1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1],
+        ]
+    )
+    return op.reshape([4, 2, 2, 4])
 
 
 def _swap_tensors(m, s):
@@ -10,7 +28,17 @@ def _swap_tensors(m, s):
     swap neighboring two tensors at s and s+1
     """
     assert s in range(0, mps.num_qubits(m) - 1)
-    m._apply_two(swap(), s)
+    if m.tensors[s].shape[1] == 2 and m.tensors[s + 1].shape[1] == 2:
+        m._apply_two(swap(), s)
+    elif m.tensors[s].shape[1] == 2 and m.tensors[s + 1].shape[1] == 4:
+        m._apply_two(_swap24(), s)
+    elif m.tensors[s].shape[1] == 4 and m.tensors[s + 1].shape[1] == 2:
+        m._apply_two(_swap24().transpose(2, 3, 0, 1), s)
+    else:
+        raise ValueError(
+            f"Cannot swap tensors at {s} and {s + 1}: "
+            f"{m.tensors[s].shape[1]} and {m.tensors[s + 1].shape[1]}"
+        )
     p0, p1 = m.t2q[s], m.t2q[s + 1]
     m.q2t[p0], m.q2t[p1] = s + 1, s
     m.t2q[s], m.t2q[s + 1] = p1, p0

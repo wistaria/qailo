@@ -80,3 +80,7 @@ def controlled_seq(u, pos):
             seq.append([control_propagate(), [pos[i], pos[i + 1]]])
         seq.append([control_end(u), [pos[-2], pos[-1]]])
     return seq
+
+
+def toffoli_seq(pos):
+    return controlled_seq(x(), pos)
