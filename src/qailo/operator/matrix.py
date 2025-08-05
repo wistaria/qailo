@@ -13,6 +13,6 @@ T_co = TypeVar("T_co", covariant=True, bound=np.generic)
 
 def matrix(op: npt.NDArray[T_co]) -> npt.NDArray[T_co]:
     assert is_density_matrix(op) or is_operator(op)
-    op = typing.cast(npt.NDArray[T_co], op)
+    
     n = num_qubits(op)
     return op.reshape([2**n, 2**n])
