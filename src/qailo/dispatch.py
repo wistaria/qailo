@@ -9,7 +9,6 @@ from . import mps
 from . import operator as op
 from . import state_vector as sv
 from .mps import type as mpstype
-from .util.helpertype import OPSeqElement
 
 
 @overload
@@ -37,15 +36,21 @@ def apply(
 
 
 @overload
-def apply_seq(v: npt.NDArray, seq: Iterable[OPSeqElement]) -> npt.NDArray: ...
+def apply_seq(
+    v: npt.NDArray,
+    seq: Iterable[tuple[npt.NDArray, list[int]]]
+) -> npt.NDArray: ...
 
 
 @overload
-def apply_seq(v: mpstype.mps, seq: Iterable[OPSeqElement]) -> mpstype.mps: ...
+def apply_seq(
+    v: mpstype.mps,
+    seq: Iterable[tuple[npt.NDArray, list[int]]]
+) -> mpstype.mps: ...
 
 
 def apply_seq(
-    v: npt.NDArray | mpstype.mps, seq: Iterable[OPSeqElement]
+    v: npt.NDArray | mpstype.mps, seq: Iterable[tuple[npt.NDArray, list[int]]]
 ) -> npt.NDArray | mpstype.mps:
     if sv.is_state_vector(v):
         v = sv.apply_seq(v, seq)

@@ -8,6 +8,7 @@ from typing_extensions import TypeGuard
 
 
 class mps(ABC):
+    tensors: list[npt.NDArray]
     q2t: list[int]
     t2q: list[int]
 

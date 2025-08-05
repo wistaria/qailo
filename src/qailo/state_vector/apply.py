@@ -6,7 +6,6 @@ import numpy.typing as npt
 
 from ..operator import type as op
 from ..typeutil import eincheck as ec
-from ..util.helpertype import OPSeqElement
 from . import type as sv
 
 
@@ -34,7 +33,7 @@ def apply(
 
 def apply_seq(
     v: npt.NDArray,
-    seq: Iterable[OPSeqElement],
+    seq: Iterable[tuple[npt.NDArray, list[int]]],
 ) -> npt.NDArray:
     for p, qubit in seq:
         v = apply(v, p, qubit)

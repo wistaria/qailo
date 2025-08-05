@@ -27,7 +27,6 @@ class projector_mps(mps):
         tensors [cp(1)+1...n-1]: bottom canonical
     """
 
-    tensors: list[npt.NDArray]
     nkeep: int | None
     cp: list[int]
     env: list[npt.NDArray | None]

@@ -7,7 +7,6 @@ import numpy as np
 import numpy.typing as npt
 
 from ..operator import type as op
-from ..util.helpertype import OPSeqElement
 from . import type as mps
 
 
@@ -63,11 +62,11 @@ def apply(m: mps.mps, p: npt.NDArray, pos: Sequence[int] | None = None) -> mps.m
     return _apply(deepcopy(m), p, pos)
 
 
-def _apply_seq(m: mps.mps, seq: Iterable[OPSeqElement]) -> mps.mps:
+def _apply_seq(m: mps.mps, seq: Iterable[tuple[npt.NDArray, list[int]]]) -> mps.mps:
     for p, qubit in seq:
         _apply(m, p, qubit)
     return m
 
 
-def apply_seq(m: mps.mps, seq: Iterable[OPSeqElement]) -> mps.mps:
+def apply_seq(m: mps.mps, seq: Iterable[tuple[npt.NDArray, list[int]]]) -> mps.mps:
     return _apply_seq(deepcopy(m), seq)

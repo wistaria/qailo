@@ -8,7 +8,6 @@ from pytest import approx
 
 import qailo as q
 from qailo.mps.type import mps
-from qailo.util.helpertype import OPSeqElement
 
 
 def apply(
@@ -18,15 +17,15 @@ def apply(
     m2: mps,
     m3: mps,
     v: npt.NDArray,
-    seq: list[OPSeqElement],
+    seq: list[tuple[npt.NDArray, list[int]]],
     pos: list[int],
-) -> tuple[mps, mps, mps, mps, npt.NDArray, list[OPSeqElement]]:
+) -> tuple[mps, mps, mps, mps, npt.NDArray, list[tuple[npt.NDArray, list[int]]]]:
     m0 = q.mps.apply(m0, op, pos)
     m1 = q.mps.apply(m1, op, pos)
     m2 = q.mps.apply(m2, op, pos)
     m3 = q.mps.apply(m3, op, pos)
     v = q.sv.apply(v, op, pos)
-    seq.append(OPSeqElement(op, pos))
+    seq.append((op, pos))
     return m0, m1, m2, m3, v, seq
 
 
@@ -40,7 +39,7 @@ def test_apply():
     m2 = q.mps.zero(n, nkeep=nkeep, mps=q.mps.canonical_mps)
     m3 = q.mps.zero(n, nkeep=nkeep, mps=q.mps.projector_mps)
     v = q.sv.zero(n)
-    seq: list[OPSeqElement] = []
+    seq: list[tuple[npt.NDArray, list[int]]] = []
 
     i = 4
     j = 0

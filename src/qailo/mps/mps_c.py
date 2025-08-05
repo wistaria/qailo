@@ -26,7 +26,6 @@ class canonical_mps(mps):
         tensors [cp(1)+1...n-1]: right canonical
     """
 
-    tensors: list[npt.NDArray]
     nkeep: int | None
     cp: list[int]
 
