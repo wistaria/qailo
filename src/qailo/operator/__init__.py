@@ -7,6 +7,7 @@ from .controlled import (
     cp,
     cx,
     cz,
+    toffoli_seq,
 )
 from .hconj import hconj
 from .identity import identity
@@ -28,6 +29,7 @@ __all__ = [
     cp,
     cx,
     cz,
+    toffoli_seq,
     h,
     p,
     rx,

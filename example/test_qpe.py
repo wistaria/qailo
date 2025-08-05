@@ -1,6 +1,7 @@
 import numpy as np
-import qailo as q
 from pytest import approx
+
+import qailo as q
 
 
 def test_qpe():

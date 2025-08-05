@@ -1,5 +1,6 @@
-import qailo as q
 from numpy import exp, pi
+
+import qailo as q
 
 
 def test_p():

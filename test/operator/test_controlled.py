@@ -25,3 +25,12 @@ def test_ccccx():
             p = q.op.multiply(p, q.op.control_propagate(), [i, i + 1])
         p = q.op.multiply(p, q.op.control_end(q.op.x()), [n - 2, n - 1])
         assert q.op.is_close(p, q.op.cx(n))
+
+
+def test_toffoli():
+    for n in range(3, 8):
+        p = q.op.identity(n)
+        seq = q.op.toffoli_seq(range(n))
+        for op, pos in seq:
+            p = q.op.multiply(p, op, pos)
+        assert q.op.is_close(p, q.op.cx(n))

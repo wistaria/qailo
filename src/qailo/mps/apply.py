@@ -3,10 +3,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Iterable, Sequence
 
+import numpy as np
 import numpy.typing as npt
 
 from ..operator import type as op
-from ..operator.swap import swap
 from ..util.helpertype import OPSeqElement
 from . import type as mps
 
@@ -16,7 +16,10 @@ def _swap_tensors(m: mps.mps, s: int) -> None:
     swap neighboring two tensors at s and s+1
     """
     assert s in range(0, mps.num_qubits(m) - 1)
-    m._apply_two(swap(), s)
+    d0 = m.tensors[s].shape[1]
+    d1 = m.tensors[s + 1].shape[1]
+    op = np.identity(d0 * d1).reshape([d0, d1, d0, d1]).transpose(1, 0, 2, 3)
+    m._apply_two(op, s)
     p0, p1 = m.t2q[s], m.t2q[s + 1]
     m.q2t[p0], m.q2t[p1] = s + 1, s
     m.t2q[s], m.t2q[s + 1] = p1, p0

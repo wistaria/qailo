@@ -25,12 +25,8 @@ package-dir = { "" = "src" }
 "qailo" = ["py.typed"]
 
 [project.optional-dependencies]
-dev = ["pytest", "black", "ruff"]
-
-[tool.black]
-target-version = ["py38"]
-include = '\.py$'
+dev = ["pytest", "ruff"]
 
 [tool.ruff]
 target-version = "py38"
-select = ["E", "F", "I"]
+lint.select = ["E", "F", "I"]

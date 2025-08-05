@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import numpy as np
 import numpy.typing as npt
-import qailo as q
 from pytest import approx
+
+import qailo as q
 from qailo.mps.apply import _move_qubit, _swap_tensors
 from qailo.mps.type import mps as mpstype
 

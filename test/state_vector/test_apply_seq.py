@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import qailo as q
 from pytest import approx
+
+import qailo as q
 from qailo.util.helpertype import OPSeqElement
 
 

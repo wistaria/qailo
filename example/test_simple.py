@@ -1,6 +1,7 @@
 import numpy as np
-import qailo as q
 import simple
+
+import qailo as q
 
 
 def test_simple():

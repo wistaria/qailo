@@ -84,3 +84,7 @@ def controlled_seq(u: npt.NDArray, pos: list[int]) -> list[OPSeqElement]:
             seq.append(OPSeqElement(control_propagate(), [pos[i], pos[i + 1]]))
         seq.append(OPSeqElement(control_end(u), [pos[-2], pos[-1]]))
     return seq
+
+
+def toffoli_seq(pos):
+    return controlled_seq(x(), pos)
