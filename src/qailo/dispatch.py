@@ -37,15 +37,13 @@ def apply(
 
 @overload
 def apply_seq(
-    v: npt.NDArray,
-    seq: Iterable[tuple[npt.NDArray, list[int]]]
+    v: npt.NDArray, seq: Iterable[tuple[npt.NDArray, list[int]]]
 ) -> npt.NDArray: ...
 
 
 @overload
 def apply_seq(
-    v: mpstype.mps,
-    seq: Iterable[tuple[npt.NDArray, list[int]]]
+    v: mpstype.mps, seq: Iterable[tuple[npt.NDArray, list[int]]]
 ) -> mpstype.mps: ...
 
 

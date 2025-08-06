@@ -71,8 +71,7 @@ def control_end(u: npt.NDArray) -> npt.NDArray:
 
 
 def controlled_seq(
-    u: npt.NDArray,
-    pos: list[int]
+    u: npt.NDArray, pos: list[int]
 ) -> list[tuple[npt.NDArray, list[int]]]:
     n = len(pos)
     seq: list[tuple[npt.NDArray, list[int]]] = []

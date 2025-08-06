@@ -29,7 +29,7 @@ def test_swap():
         v = q.sv.vector(q.mps.state_vector(m))
         for _ in range(64):
             s = np.random.randint(n - 1)
-            print(f"swap tensors at {s} and {s+1}")
+            print(f"swap tensors at {s} and {s + 1}")
             m._canonicalize(s)
             _swap_tensors(m, s)
             print(q.sv.vector(q.mps.state_vector(m)))

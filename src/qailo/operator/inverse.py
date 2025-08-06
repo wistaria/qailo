@@ -9,7 +9,7 @@ from .type import is_operator
 
 
 def inverse_seq(
-    seq: Reversible[tuple[npt.NDArray, list[int]]]
+    seq: Reversible[tuple[npt.NDArray, list[int]]],
 ) -> list[tuple[npt.NDArray, list[int]]]:
     res: list[tuple[npt.NDArray, list[int]]] = []
     for p, pos in reversed(seq):
