@@ -12,7 +12,7 @@ def checked_einsum(*args: npt.NDArray | list[int]) -> npt.NDArray:
         if i % 2 == 0:
             assert isinstance(arg, np.ndarray)
         else:
-            assert isinstance(arg, list)
+            assert isinstance(arg, list) and all(isinstance(x, int) for x in arg)
     ret = np.einsum(*args)
     assert isinstance(ret, np.ndarray)
     return ret
