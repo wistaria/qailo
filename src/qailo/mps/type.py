@@ -12,8 +12,8 @@ class mps(ABC):
     q2t: list[int]
     t2q: list[int]
 
-    @abstractmethod
-    def __init__(self, tensors: list[npt.NDArray], nkeep: int | None = None) -> None: ...
+    def __init__(self, tensors: list[npt.NDArray], nkeep: int | None = None) -> None:
+        pass
 
     @abstractmethod
     def _num_qubits(self) -> int: ...
